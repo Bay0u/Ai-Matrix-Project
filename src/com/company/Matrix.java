@@ -1,9 +1,11 @@
 package com.company;
 
-import java.util.Arrays;
+import java.util.*;
 
 class Node{
-    String state="Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1,A2,H4;TotalHostages:H1:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;HostagesSaved:H2,H3;Killed:H1,A3"; // size current position
+    String state="Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;" +
+            "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;" +
+            "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y"; // size current position
     Node parent;
     String operator="up";//up:cost+10,down:cost+10,left:cost+10,right:cost+10,carry:cost-10,drop:-10,takePill:-10,kill:+10,fly:+10";
     int depth; // ?
@@ -33,8 +35,6 @@ class Node{
         return false;
     }
 
-
-
     //breadthFirst
     //depthFirst
     //iterativeDeepeningSearch
@@ -49,10 +49,10 @@ class searchProblems{
     //Operators
     String Operators = "up,down,left,right,carry,drop,takePill,kill,fly";
     //initial state
-    Node InitialState;
+    public Node InitialState;
     //goal test
     //path cost
-    boolean isNeoinHome(String [] stringarray){
+    public boolean isNeoinHome(String [] stringarray){
         String Neoplace = stringarray[0];
         String Telephone = stringarray[5];
         if(Neoplace == Telephone){
@@ -61,16 +61,16 @@ class searchProblems{
             return false;
         }
     }
-    boolean isNeoDead(String [] stringarray){
+    public boolean isNeoDead(String [] stringarray){
         if(stringarray[1]=="100"){
             return true;
         }else{
             return false;
         }
     }
-    boolean areHostagesSaved(String [] stringarray){
+    public boolean areHostagesSaved(String [] stringarray){
         String Hostages = stringarray[4];//[H1:30,H2:50,H3:10]
-        String[] HostageArray = Hostages.split(",");//[H1:30],[H2:50],[H3:10]
+        String[] HostageArray = Hostages.split(",");//
         String Saved = stringarray[6];//HostagesSaved:H1,H2,H3
         String[] SavedHostageArray = Saved.split(",");//H1,H2,H3
         int numberOfKilledHostages = 0;
@@ -244,8 +244,171 @@ class Matrix {
 
     public static String solve(String grid, String strategy, boolean visualize) {//
         String [] OurGrid = grid.split(";");
-        searchProblems p1;
-        Node n;
+        searchProblems p = null;
+        Node n = null;
+        String hostages="";
+        String agents="";
+        String pads="";
+        String pills="";
+        String[] operators=new String[]{"up","down","left","right","carry","drop","takePill","kill","fly"};
+        List<String> Operators = new ArrayList<>(Arrays.asList(operators));
+
+        String GridCord [] = OurGrid[0].split(",");
+        String M=GridCord[0];
+        String N=GridCord[1];
+        int CarryNumber = Integer.parseInt(OurGrid[1]);
+        String Carried [] = OurGrid[2].split(",");
+        for(int i = 0; i<OurGrid[7].length();i++){
+            String [] Hostages = OurGrid[7].split(",");
+            hostages = "H"+i+":"+Hostages[i]+":"+Hostages[i+1]+":"+Hostages[i+2]+",";
+        }
+        hostages = hostages.substring(0, hostages.length() - 1);
+        for(int i = 0; i<OurGrid[4].length();i++){
+            String [] Agents = OurGrid[4].split(",");
+            agents = "A"+i+":"+Agents[i]+":"+Agents[i+1]+",";
+        }
+        agents = agents.substring(0, agents.length() - 1);
+        for(int i = 0; i<OurGrid[6].length();i++){
+            String [] Pads = OurGrid[6].split(",");
+            pads = "SP"+i+":"+Pads[i]+":"+Pads[i+1]+","+"FP"+i+":"+Pads[i+2]+":"+Pads[i+3]+",";
+        }
+        pads = pads.substring(0, pads.length() - 1);
+        for(int i = 0; i<OurGrid[5].length();i++){
+            String [] Pills = OurGrid[5].split(",");
+            pills = "L"+i+":"+Pills[i]+":"+Pills[i+1]+",";
+        }
+        pills = pills.substring(0, pills.length() - 1);
+        n.state=OurGrid[2]+";0;;"+agents+";"+hostages+";"+OurGrid[3]+";"+";"+pads+";"+pills;
+        p.InitialState = n;
+
+        Queue<Node> OurQueue = new LinkedList<>();
+
+        while(p.isGoalState(n)){
+            String [] NodeList = n.state.split(";");
+            String [] NeoCord = NodeList[0].split(",");//[x,y]
+            String [] Agents = NodeList[3].split(",");
+            String [] Hostages = NodeList[4].split(",");
+            String NeoX = NeoCord[0];
+            String NeoY = NeoCord[1];
+            String [] Pads = NodeList[8].split(",");
+            String [] Pills = NodeList[9].split(",");
+            String [] CarriedHostages = NodeList[2].split(",");
+            String [] SavedHostages = NodeList[6].split(",");
+            int NeoDamage = Integer.parseInt(NodeList[1]);
+            String subgoal="x,y";
+            int HostageDamage = 0;
+            //subgoal will be 1) the higher damage hostage should be hold 2)any hostage become agent > should be killed
+
+
+
+
+
+            for(int i=0 ;i<(Hostages.length/4);i++){
+                String [] HostagesHelper = Hostages[i].split(":");//[[H1,H1X,H1Y,H1D],,,,]
+                if(HostageDamage<(Integer.parseInt(HostagesHelper[i+3]))){
+                    HostageDamage = Integer.parseInt(HostagesHelper[i+3]);
+                }
+            }
+            //checks Neo Grid Boundaries
+            if(NeoX=="0"){
+                if(Operators.contains("up")){
+                    Operators.remove("up");
+                }
+            }
+            if(NeoY=="0"){
+                if(Operators.contains("left")){
+                    Operators.remove("left");
+                }
+            }
+            if(NeoX==M) {
+                if(Operators.contains("right")){
+                    Operators.remove("right");
+                }
+            }
+            if(NeoY==N){
+                if(Operators.contains("down")){
+                    Operators.remove("down");
+                }
+            }
+            //if neo in Pad place
+            for(int i =0 ;i<(Pads.length/4);i=i+4){ // [sp1x,sp1y,fp1x,fp1y]
+                if(NeoX == Pads[0] && NeoY == Pads[1]){
+                    n.operator="fly";
+                    NeoX = Pads[2];
+                    NeoY = Pads[3];
+                }if(NeoX == Pads[2] && NeoY == Pads[3]){
+                    n.operator="fly";
+                    NeoX = Pads[0];
+                    NeoY = Pads[1];
+                }
+                else{
+                    Operators.remove("fly");
+                }
+            }
+            //if neo in Hostage place
+            for(int i=0 ;i<(Hostages.length/4);i++){
+                String [] HostagesHelper = Hostages[i].split(":");//[[H1,H1X,H1Y,H1D],,,,]
+                if(NeoX == HostagesHelper[i+1] && NeoY == HostagesHelper[i+2]){
+                    if(CarryNumber>CarriedHostages.length){
+                        n.operator="carry";
+                        CarriedHostages[CarriedHostages.length]=HostagesHelper[i];
+                    }
+                    else{
+                        Operators.remove("carry");
+                    }
+                }
+            }
+            //IF NEO in TB place
+            if(NodeList[0] == NodeList[5]){
+                if(CarriedHostages.length!=0){
+                    n.operator="drop";
+                    for(int i =0; i<CarriedHostages.length;i++){
+                        SavedHostages[SavedHostages.length]=CarriedHostages[i];
+                        CarriedHostages[i]="";
+                    }
+                }else{
+                    Operators.remove("drop");
+                }
+            }
+            //IF Neo in Pill place detect the if the damage > 50 take the pill
+            for(int i=0 ;i<(Pills.length/2);i=i+2){
+                if(NeoX == Pills[i] && NeoY == Pills[i+1]){
+                    if(Integer.parseInt(NodeList[1])>50){
+                        n.operator="takePill";
+                        Pills[i]="";
+                        Pills[i+1]="";
+                        // neo damage and hostages damage resets
+                        NeoDamage=NeoDamage-20;
+
+                        for(int j=0 ;j<(Hostages.length/4);j++){//[H1:H1X:H1Y:H1D],[H2:H2X:H2Y:H2D]
+                            boolean flag = false;
+                            String [] HostagesHelper = Hostages[j].split(":");//[H1,H1X,H1Y,H1D]
+                            if(Integer.parseInt(HostagesHelper[j+3])!=100){
+                                //then hostage is free or carried or saved
+                                for(int k =0 ; k<SavedHostages.length;k++){
+                                    if(SavedHostages[k]==HostagesHelper[j]){
+                                        flag=true;
+                                    }
+                                }
+                                if(!flag){
+                                    HostagesHelper[j+3]=(Integer.parseInt(HostagesHelper[j+3])-22)+"";
+                                }
+                            }
+                        }
+
+                    }
+                    else{
+                        Operators.remove("takePill");
+                    }
+                }
+            }
+
+
+
+
+            //restore all the removed operators for the next cycle
+            Operators = new ArrayList<>(Arrays.asList(operators));
+        }
 
         String plan = ""; // up, down, left, right, carry, drop, takePill, kill, and fly
         String deaths = "";
@@ -253,6 +416,10 @@ class Matrix {
         String nodes = "";
         return plan + ";" + deaths + ";" + kills + ";" + nodes;
     }
+
+
+
+
     // HELPERS
     public static int randomGenerator(int m, int n) {
         return m + (int) (Math.random() * (n + 1));
