@@ -435,7 +435,7 @@ class Matrix {
             for(int i = 0; i< Agents.length; i++){
                 String[] agentHelper = Agents[i].split(":");
                 if((Integer.parseInt(NeoX)-1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2])
-                    Children.add(calculateMove("killUp",n));
+                    Children.add(calculateMove("kill",n));
             }
             Children.add(calculateMove("up",n));
         }
@@ -443,7 +443,7 @@ class Matrix {
             for(int i = 0; i< Agents.length; i++){
                 String[] agentHelper = Agents[i].split(":");
                 if((Integer.parseInt(NeoX)+1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2])
-                    Children.add(calculateMove("killDown",n));
+                    Children.add(calculateMove("kill",n));
             }
             Children.add(calculateMove("down",n));
         }
@@ -451,7 +451,7 @@ class Matrix {
             for(int i = 0; i< Agents.length; i++){
                 String[] agentHelper = Agents[i].split(":");
                 if(NeoX == agentHelper[1] && (Integer.parseInt(NeoY)-1) == Integer.parseInt(agentHelper[2]))
-                    Children.add(calculateMove("killLeft",n));
+                    Children.add(calculateMove("kill",n));
             }
             Children.add(calculateMove("left",n));
         }
@@ -459,7 +459,7 @@ class Matrix {
             for(int i = 0; i< Agents.length; i++){
                 String[] agentHelper = Agents[i].split(":");
                 if(NeoX == agentHelper[1] && (Integer.parseInt(NeoY)+1) == Integer.parseInt(agentHelper[2]))
-                    Children.add(calculateMove("killRight",n));
+                    Children.add(calculateMove("kill",n));
             }
             Children.add(calculateMove("right",n));
         }
@@ -640,7 +640,7 @@ class Matrix {
                 NeoPlace = (Integer.parseInt(NeoX) - 1) + "," + NeoY;
                 child.operator = "fly";
                 break;
-            case "killUp":
+            case "kill":
                 NeoDamage += 20;
                 for (int i = 0; i < Agents.length; i++) {
                     String[] agentHelper = Agents[i].split(":");
@@ -648,46 +648,23 @@ class Matrix {
                         if (Killed.length() != 0)
                             Killed += ",";
                         Killed += agentHelper[0];
-                    } else
-                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-                }
-                child.operator = "kill";
-                break;
-            case "killDown":
-                NeoDamage += 20;
-                for (int i = 0; i < Agents.length; i++) {
-                    String[] agentHelper = Agents[i].split(":");
+                    }
                     if ((Integer.parseInt(NeoX) + 1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2]) {
                         if (Killed.length() != 0)
                             Killed += ",";
                         Killed += agentHelper[0];
-                    } else
-                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-                }
-                child.operator = "kill";
-                break;
-            case "killLeft":
-                NeoDamage += 20;
-                for (int i = 0; i < Agents.length; i++) {
-                    String[] agentHelper = Agents[i].split(":");
+                    }
                     if (NeoX == agentHelper[1] && (Integer.parseInt(NeoY) - 1) == Integer.parseInt(agentHelper[2])) {
                         if (Killed.length() != 0)
                             Killed += ",";
                         Killed += agentHelper[0];
-                    } else
-                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-                }
-                child.operator = "kill";
-                break;
-            case "killRight":
-                NeoDamage += 20;
-                for (int i = 0; i < Agents.length; i++) {
-                    String[] agentHelper = Agents[i].split(":");
+                    }
                     if (NeoX == agentHelper[1] && (Integer.parseInt(NeoY) + 1) == Integer.parseInt(agentHelper[2])) {
                         if (Killed.length() != 0)
                             Killed += ",";
                         Killed += agentHelper[0];
-                    } else
+                    }
+                    else
                         TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
                 }
                 child.operator = "kill";
