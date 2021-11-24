@@ -6,7 +6,7 @@ class Node {
     String state = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
             + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
             + "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber"; // size current
-                                                                                                   // position
+    // position
     Node parent;
     String operator;// up:cost+10,down:cost+10,left:cost+10,right:cost+10,carry:cost-10,drop:-10,takePill:-10,kill:+10,fly:+10";
     int depth; // ?
@@ -92,8 +92,8 @@ class searchProblems {
             }
         }
         if (SavedHostageArray.length + numberOfKilledHostages == HostageArray.length /*
-                                                                                      * && Hostages.length()==0
-                                                                                      */) {
+         * && Hostages.length()==0
+         */) {
             return true;
         } else {
             return false;
@@ -113,49 +113,50 @@ class searchProblems {
         return false;
     }
 
-    public void pathCost(Node node) {
+    public static void pathCost(Node node) {
         // operator
         // up:cost+10,down:cost+10,left:cost+10,right:cost+10,carry:cost-20,drop:-20,takePill:-20,kill:+20,fly:+10";
         // hostage died : cost+10
         String[] stringarray = node.state.split(";");
         switch (node.operator) {
-        case "up":
-            node.cost = node.cost + 10;
-            break;
-        case "down":
-            node.cost = node.cost + 10;
-            break;
-        case "left":
-            node.cost = node.cost + 10;
-            break;
-        case "right":
-            node.cost = node.cost + 10;
-            break;
-        case "carry":
-            if (stringarray[0] != stringarray[5]) // carry shouldn't be in the telphone
-                node.cost = node.cost - 20;
-            else
+            case "up":
                 node.cost = node.cost + 10;
-            break;
-        case "drop":
-            if (stringarray[0] == stringarray[5]) // drop should be in the telphone only
-                node.cost = node.cost - 20;
-            else
+                break;
+            case "down":
                 node.cost = node.cost + 10;
-            break;
-        case "takePill":
-            node.cost = node.cost - 20;
-            break;
-        case "kill":
-            node.cost = node.cost + 20;
-            break;
-        case "fly":
-            node.cost = node.cost + 10;
-            break;
-        default:
-            break;
+                break;
+            case "left":
+                node.cost = node.cost + 10;
+                break;
+            case "right":
+                node.cost = node.cost + 10;
+                break;
+            case "carry":
+                if (stringarray[0] != stringarray[5]) // carry shouldn't be in the telphone
+                    node.cost = node.cost - 20;
+                else
+                    node.cost = node.cost + 10;
+                break;
+            case "drop":
+                if (stringarray[0] == stringarray[5]) // drop should be in the telphone only
+                    node.cost = node.cost - 20;
+                else
+                    node.cost = node.cost + 10;
+                break;
+            case "takePill":
+                node.cost = node.cost - 20;
+                break;
+            case "kill":
+                node.cost = node.cost + 20;
+                break;
+            case "fly":
+                node.cost = node.cost + 10;
+                break;
+            default:
+                break;
         }
     }
+
 }
 
 class Matrix {
@@ -311,32 +312,32 @@ class Matrix {
 
         while (!p.isGoalState(n)) {
             switch (strategy) {
-            case "BF":
-                plan = breadthFirst();
-                break;
-            case "DF":
-                plan = depthFirst();
-                break;
-            case "ID":
-                plan = iterativeDeepeningSearch();
-                break;
-            case "UC":
-                plan = uniformCostSearch();
-                break;
-            case "GR1":
-                plan = greedySearchOne();
-                break;
-            case "GR2":
-                plan = greedySearchTwo();
-                break;
-            case "AS1":
-                plan = aStarOne();
-                break;
-            case "AS2":
-                plan = aStarTwo();
-                break;
-            default:
-                break;
+                case "BF":
+                    plan = breadthFirst();
+                    break;
+                case "DF":
+                    plan = depthFirst();
+                    break;
+                case "ID":
+                    plan = iterativeDeepeningSearch();
+                    break;
+                case "UC":
+                    plan = uniformCostSearch();
+                    break;
+                case "GR1":
+                    plan = greedySearchOne();
+                    break;
+                case "GR2":
+                    plan = greedySearchTwo();
+                    break;
+                case "AS1":
+                    plan = aStarOne();
+                    break;
+                case "AS2":
+                    plan = aStarTwo();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -415,7 +416,7 @@ class Matrix {
         // }
     }
 
-    public static stateSpace(Node n){
+    public void stateSpace(Node n){
         String[] NodeList = n.state.split(";");
         String[] NeoCord = NodeList[0].split(",");// [x,y]
         String[] Agents = NodeList[3].split(",");
@@ -438,7 +439,7 @@ class Matrix {
             }
             Children.add(calculateMove("up",n));
         }
-        if (NeoY != N) { // DOWN
+        if (Integer.parseInt(NeoY) != N) { // DOWN
             for(int i = 0; i< Agents.length; i++){
                 String[] agentHelper = Agents[i].split(":");
                 if((Integer.parseInt(NeoX)+1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2])
@@ -454,7 +455,7 @@ class Matrix {
             }
             Children.add(calculateMove("left",n));
         }
-        if (NeoX != M) { // RIGHT
+        if (Integer.parseInt(NeoX) != M) { // RIGHT
             for(int i = 0; i< Agents.length; i++){
                 String[] agentHelper = Agents[i].split(":");
                 if(NeoX == agentHelper[1] && (Integer.parseInt(NeoY)+1) == Integer.parseInt(agentHelper[2]))
@@ -490,7 +491,7 @@ class Matrix {
         Node child = new Node(); // STATE PARENT OPERATOR DEPTH COST
         child.parent = parent;
         child.depth = parent.depth + 1;
-        child.cost = new searchProblems.pathCost(child);
+        searchProblems.pathCost(child);
 
         // SPLITTING PARENT STATE
         String[] NodeList = parent.state.split(";");
@@ -514,190 +515,190 @@ class Matrix {
         String NewPills = NodeList[9];
 
         switch (action) {
-        case "up":
-            NeoPlace = (Integer.parseInt(NeoX) - 1) + "," + NeoY;
-            if (CarriedHostages.length != 0) {
-                for (int i = 0; i < Hostages.length; i++) {
-                    String[] HostagesHelper = Hostages[j].split(":");
-                    for (int j = 0; j < CarriedHostages.length; j++) {
-                        if (HostagesHelper[0] == CarriedHostages[j])
-                            HostagesHelper[1] = Integer.parseInt(HostagesHelper[1]) - 1;
-                    }
-                    String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                            + HostagesHelper[3];
-                    Hostages[i] = hostage;
-                }
-            }
-            child.operator = "up";
-            break;
-        case "down":
-            NeoPlace = (Integer.parseInt(NeoX) + 1) + "," + NeoY;
-            if (CarriedHostages.length != 0) {
-                for (int i = 0; i < Hostages.length; i++) {
-                    String[] HostagesHelper = Hostages[j].split(":");
-                    for (int j = 0; j < CarriedHostages.length; j++) {
-                        if (HostagesHelper[0] == CarriedHostages[j])
-                            HostagesHelper[1] = Integer.parseInt(HostagesHelper[1]) + 1;
-                    }
-                    String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                            + HostagesHelper[3];
-                    Hostages[i] = hostage;
-                }
-            }
-            child.operator = "down";
-            break;
-        case "left":
-            NeoPlace = NeoX + "," + (Integer.parseInt(NeoY) - 1);
-            if (CarriedHostages.length != 0) {
-                for (int i = 0; i < Hostages.length; i++) {
-                    String[] HostagesHelper = Hostages[j].split(":");
-                    for (int j = 0; j < CarriedHostages.length; j++) {
-                        if (HostagesHelper[0] == CarriedHostages[j])
-                            HostagesHelper[2] = Integer.parseInt(HostagesHelper[2]) - 1;
-                    }
-                    String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                            + HostagesHelper[3];
-                    Hostages[i] = hostage;
-                }
-            }
-            child.operator = "left";
-            break;
-        case "right":
-            NeoPlace = NeoX + "," + (Integer.parseInt(NeoY) + 1);
-            if (CarriedHostages.length != 0) {
-                for (int i = 0; i < Hostages.length; i++) {
-                    String[] HostagesHelper = Hostages[j].split(":");
-                    for (int j = 0; j < CarriedHostages.length; j++) {
-                        if (HostagesHelper[0] == CarriedHostages[j])
-                            HostagesHelper[2] = Integer.parseInt(HostagesHelper[2]) + 1;
-                    }
-                    String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                            + HostagesHelper[3];
-                    Hostages[i] = hostage;
-                }
-            }
-            child.operator = "right";
-            break;
-        case "carry":
-            for (int i = 0; i < Hostages.length; i++) {
-                String[] HostagesHelper = Hostages[i].split(":");
-                if (NeoX == HostagesHelper[1] && NeoY == HostagesHelper[2]) {
-                    if (NewCarriedHostages.length() != 0)
-                        NewCarriedHostages += ",";
-                    NewCarriedHostages += HostagesHelper[0];
-                }
-            }
-            child.operator = "carry";
-            break;
-        case "drop":
-            for (int i = 0; i < CarriedHostages.length; i++) {
-                SavedHostages[SavedHostages.length] = CarriedHostages[i];
-                CarriedHostages[i] = "";
-                NewSavedHostages += CarriedHostages[i];
-            }
-            NewCarriedHostages = "";
-            child.operator = "drop";
-            break;
-        case "takePill":
-            for (int i = 0; i < Pills.length; i = i + 2)
-                if (NeoDamage > 50) {
-                    Pills[i] = "";
-                    Pills[i + 1] = "";
-                    // neo damage and hostages damage resets
-                    NeoDamage = NeoDamage - 20;
-                    if (NeoDamage < 0)
-                        NeoDamage = 0;
-                    for (int j = 0; j < (Hostages.length / 4); j++) {
-                        boolean flag = false;
-                        String[] HostagesHelper = Hostages[j].split(":");
-                        if (Integer.parseInt(HostagesHelper[3]) >= 100) {
-                            for (int k = 0; k < SavedHostages.length; k++)
-                                if (SavedHostages[k] == HostagesHelper[0])
-                                    flag = true;
-                            if (!flag) {
-                                HostagesHelper[3] = (Integer.parseInt(HostagesHelper[3]) - 22) + "";
-                                if (Integer.parseInt(HostagesHelper[3]) < 0)
-                                    HostagesHelper[3] = 0 + "";
-                            }
-
+            case "up":
+                NeoPlace = (Integer.parseInt(NeoX) - 1) + "," + NeoY;
+                if (CarriedHostages.length != 0) {
+                    for (int i = 0; i < Hostages.length; i++) {
+                        String[] HostagesHelper = Hostages[i].split(":");
+                        for (int j = 0; j < CarriedHostages.length; j++) {
+                            if (HostagesHelper[0] == CarriedHostages[j])
+                                HostagesHelper[1] = String.valueOf(Integer.parseInt(HostagesHelper[1]) - 1);
                         }
+                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
+                                + HostagesHelper[3];
+                        Hostages[i] = hostage;
                     }
-                } else
-                    NewPills += Pills[i] + "," + Pills[i + 1] + ",";
-            NewPills = NewPills.substring(0, NewPills.length() - 1);
-            child.operator = "takePill";
-            break;
-        case "fly":
-            for (int i = 0; i < (Pads.length / 4); i = i + 4) { // [sp1x,sp1y,fp1x,fp1y]
-                if (NeoX == Pads[0] && NeoY == Pads[1]) {
-                    NeoPlace = Pads[2] + "," + Pads[3];
                 }
-                if (NeoX == Pads[2] && NeoY == Pads[3]) {
-                    NeoPlace = Pads[0] + "," + Pads[1];
+                child.operator = "up";
+                break;
+            case "down":
+                NeoPlace = (Integer.parseInt(NeoX) + 1) + "," + NeoY;
+                if (CarriedHostages.length != 0) {
+                    for (int i = 0; i < Hostages.length; i++) {
+                        String[] HostagesHelper = Hostages[i].split(":");
+                        for (int j = 0; j < CarriedHostages.length; j++) {
+                            if (HostagesHelper[0] == CarriedHostages[j])
+                                HostagesHelper[1] = String.valueOf(Integer.parseInt(HostagesHelper[1]) + 1);
+                        }
+                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
+                                + HostagesHelper[3];
+                        Hostages[i] = hostage;
+                    }
                 }
-            }
-            NeoPlace = (Integer.parseInt(NeoX) - 1) + "," + NeoY;
-            child.operator = "fly";
-            break;
-        case "killUp":
-            NeoDamage += 20;
-            for (int i = 0; i < Agents.length; i++) {
-                String[] agentHelper = Agents[i].split(":");
-                if ((Integer.parseInt(NeoX) - 1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2]) {
-                    if (Killed.length() != 0)
-                        Killed += ",";
-                    Killed += agentHelper[0];
-                } else
-                    TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-            }
-            child.operator = "kill";
-            break;
-        case "killDown":
-            NeoDamage += 20;
-            for (int i = 0; i < Agents.length; i++) {
-                String[] agentHelper = Agents[i].split(":");
-                if ((Integer.parseInt(NeoX) + 1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2]) {
-                    if (Killed.length() != 0)
-                        Killed += ",";
-                    Killed += agentHelper[0];
-                } else
-                    TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-            }
-            child.operator = "kill";
-            break;
-        case "killLeft":
-            NeoDamage += 20;
-            for (int i = 0; i < Agents.length; i++) {
-                String[] agentHelper = Agents[i].split(":");
-                if (NeoX == agentHelper[1] && (Integer.parseInt(NeoY) - 1) == Integer.parseInt(agentHelper[2])) {
-                    if (Killed.length() != 0)
-                        Killed += ",";
-                    Killed += agentHelper[0];
-                } else
-                    TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-            }
-            child.operator = "kill";
-            break;
-        case "killRight":
-            NeoDamage += 20;
-            for (int i = 0; i < Agents.length; i++) {
-                String[] agentHelper = Agents[i].split(":");
-                if (NeoX == agentHelper[1] && (Integer.parseInt(NeoY) + 1) == Integer.parseInt(agentHelper[2])) {
-                    if (Killed.length() != 0)
-                        Killed += ",";
-                    Killed += agentHelper[0];
-                } else
-                    TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
-            }
-            child.operator = "kill";
-            break;
-        default:
-            break;
+                child.operator = "down";
+                break;
+            case "left":
+                NeoPlace = NeoX + "," + (Integer.parseInt(NeoY) - 1);
+                if (CarriedHostages.length != 0) {
+                    for (int i = 0; i < Hostages.length; i++) {
+                        String[] HostagesHelper = Hostages[i].split(":");
+                        for (int j = 0; j < CarriedHostages.length; j++) {
+                            if (HostagesHelper[0] == CarriedHostages[j])
+                                HostagesHelper[2] = String.valueOf(Integer.parseInt(HostagesHelper[2]) - 1);
+                        }
+                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
+                                + HostagesHelper[3];
+                        Hostages[i] = hostage;
+                    }
+                }
+                child.operator = "left";
+                break;
+            case "right":
+                NeoPlace = NeoX + "," + (Integer.parseInt(NeoY) + 1);
+                if (CarriedHostages.length != 0) {
+                    for (int i = 0; i < Hostages.length; i++) {
+                        String[] HostagesHelper = Hostages[i].split(":");
+                        for (int j = 0; j < CarriedHostages.length; j++) {
+                            if (HostagesHelper[0] == CarriedHostages[j])
+                                HostagesHelper[2] = String.valueOf(Integer.parseInt(HostagesHelper[2]) + 1);
+                        }
+                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
+                                + HostagesHelper[3];
+                        Hostages[i] = hostage;
+                    }
+                }
+                child.operator = "right";
+                break;
+            case "carry":
+                for (int i = 0; i < Hostages.length; i++) {
+                    String[] HostagesHelper = Hostages[i].split(":");
+                    if (NeoX == HostagesHelper[1] && NeoY == HostagesHelper[2]) {
+                        if (NewCarriedHostages.length() != 0)
+                            NewCarriedHostages += ",";
+                        NewCarriedHostages += HostagesHelper[0];
+                    }
+                }
+                child.operator = "carry";
+                break;
+            case "drop":
+                for (int i = 0; i < CarriedHostages.length; i++) {
+                    SavedHostages[SavedHostages.length] = CarriedHostages[i];
+                    CarriedHostages[i] = "";
+                    NewSavedHostages += CarriedHostages[i];
+                }
+                NewCarriedHostages = "";
+                child.operator = "drop";
+                break;
+            case "takePill":
+                for (int i = 0; i < Pills.length; i = i + 2)
+                    if (NeoDamage > 50) {
+                        Pills[i] = "";
+                        Pills[i + 1] = "";
+                        // neo damage and hostages damage resets
+                        NeoDamage = NeoDamage - 20;
+                        if (NeoDamage < 0)
+                            NeoDamage = 0;
+                        for (int j = 0; j < (Hostages.length / 4); j++) {
+                            boolean flag = false;
+                            String[] HostagesHelper = Hostages[j].split(":");
+                            if (Integer.parseInt(HostagesHelper[3]) >= 100) {
+                                for (int k = 0; k < SavedHostages.length; k++)
+                                    if (SavedHostages[k] == HostagesHelper[0])
+                                        flag = true;
+                                if (!flag) {
+                                    HostagesHelper[3] = (Integer.parseInt(HostagesHelper[3]) - 22) + "";
+                                    if (Integer.parseInt(HostagesHelper[3]) < 0)
+                                        HostagesHelper[3] = 0 + "";
+                                }
+
+                            }
+                        }
+                    } else
+                        NewPills += Pills[i] + "," + Pills[i + 1] + ",";
+                NewPills = NewPills.substring(0, NewPills.length() - 1);
+                child.operator = "takePill";
+                break;
+            case "fly":
+                for (int i = 0; i < (Pads.length / 4); i = i + 4) { // [sp1x,sp1y,fp1x,fp1y]
+                    if (NeoX == Pads[0] && NeoY == Pads[1]) {
+                        NeoPlace = Pads[2] + "," + Pads[3];
+                    }
+                    if (NeoX == Pads[2] && NeoY == Pads[3]) {
+                        NeoPlace = Pads[0] + "," + Pads[1];
+                    }
+                }
+                NeoPlace = (Integer.parseInt(NeoX) - 1) + "," + NeoY;
+                child.operator = "fly";
+                break;
+            case "killUp":
+                NeoDamage += 20;
+                for (int i = 0; i < Agents.length; i++) {
+                    String[] agentHelper = Agents[i].split(":");
+                    if ((Integer.parseInt(NeoX) - 1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2]) {
+                        if (Killed.length() != 0)
+                            Killed += ",";
+                        Killed += agentHelper[0];
+                    } else
+                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
+                }
+                child.operator = "kill";
+                break;
+            case "killDown":
+                NeoDamage += 20;
+                for (int i = 0; i < Agents.length; i++) {
+                    String[] agentHelper = Agents[i].split(":");
+                    if ((Integer.parseInt(NeoX) + 1) == Integer.parseInt(agentHelper[1]) && NeoY == agentHelper[2]) {
+                        if (Killed.length() != 0)
+                            Killed += ",";
+                        Killed += agentHelper[0];
+                    } else
+                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
+                }
+                child.operator = "kill";
+                break;
+            case "killLeft":
+                NeoDamage += 20;
+                for (int i = 0; i < Agents.length; i++) {
+                    String[] agentHelper = Agents[i].split(":");
+                    if (NeoX == agentHelper[1] && (Integer.parseInt(NeoY) - 1) == Integer.parseInt(agentHelper[2])) {
+                        if (Killed.length() != 0)
+                            Killed += ",";
+                        Killed += agentHelper[0];
+                    } else
+                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
+                }
+                child.operator = "kill";
+                break;
+            case "killRight":
+                NeoDamage += 20;
+                for (int i = 0; i < Agents.length; i++) {
+                    String[] agentHelper = Agents[i].split(":");
+                    if (NeoX == agentHelper[1] && (Integer.parseInt(NeoY) + 1) == Integer.parseInt(agentHelper[2])) {
+                        if (Killed.length() != 0)
+                            Killed += ",";
+                        Killed += agentHelper[0];
+                    } else
+                        TotalAgents = agentHelper[i] + ":" + agentHelper[i + 1] + ":" + agentHelper[i + 2] + ",";
+                }
+                child.operator = "kill";
+                break;
+            default:
+                break;
         }
 
         for (int i = 0; i < Hostages.length; i++) { // EveryTick
             String[] HostagesHelper = Hostages[i].split(":");
-            HostagesHelper[3] = Integer.parseInt(HostagesHelper[3]) + 2;
+            HostagesHelper[3] = String.valueOf(Integer.parseInt(HostagesHelper[3]) + 2);
             if (Integer.parseInt(HostagesHelper[3]) >= 100) {
                 if (TotalAgents.length() != 0)
                     TotalAgents += ",";
@@ -709,7 +710,7 @@ class Matrix {
         }
 
         String newState = NeoPlace + ";" + NeoDamage + ";" + NewCarriedHostages + ";" + TotalAgents + ";";
-        for (int i; i < Hostages.length; i++)
+        for (int i=0; i < Hostages.length; i++)
             newState += Hostages[i] + ",";
         newState = newState.substring(0, newState.length() - 1);
         newState += ";" + NodeList[5] + ";" + NewSavedHostages + ";" + Killed + ";" + NodeList[8] + ";" + NewPills + ";"
