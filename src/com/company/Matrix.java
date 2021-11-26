@@ -1,9 +1,6 @@
 package com.company;
-
 import java.util.*;
-
 import static java.lang.Math.sqrt;
-
 class Node {
     public String state;
     // = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
@@ -43,7 +40,6 @@ class Node {
     // 5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;
     // 0,0,30,3,0,80,4,4,80
 }
-
 class searchProblems {
     // Operators
     String Operators = "up,down,left,right,carry,drop,takePill,kill,fly";
@@ -97,8 +93,8 @@ class searchProblems {
             }
         }
         if (SavedHostageArray.length + numberOfKilledHostages == HostageArray.length /*
-                                                                                      * && Hostages.length()==0
-                                                                                      */) {
+         * && Hostages.length()==0
+         */) {
             return true;
         } else {
             return false;
@@ -114,8 +110,8 @@ class searchProblems {
         // Chick neo hp isn't 0
         String[] stringarray = node.state.split(";");
         if (isNeoinHome(stringarray) && areHostagesSaved(stringarray) && !isNeoDead(stringarray)) {
-            node.H1=0;
-            node.H2=0;
+            node.H1 = 0;
+            node.H2 = 0;
             return true;
         }
         return false;
@@ -127,45 +123,46 @@ class searchProblems {
         // hostage died : cost+10
         String[] stringarray = node.state.split(";");
         switch (node.operator) {
-        case "up":
-            node.cost = node.cost + 10;
-            break;
-        case "down":
-            node.cost = node.cost + 10;
-            break;
-        case "left":
-            node.cost = node.cost + 10;
-            break;
-        case "right":
-            node.cost = node.cost + 10;
-            break;
-        case "carry":
-            if (stringarray[0] != stringarray[5]) // carry shouldn't be in the telphone
-                node.cost = node.cost - 20;
-            else
+            case "up":
                 node.cost = node.cost + 10;
-            break;
-        case "drop":
-            if (stringarray[0] == stringarray[5]) // drop should be in the telphone only
-                node.cost = node.cost - 20;
-            else
+                break;
+            case "down":
                 node.cost = node.cost + 10;
-            break;
-        case "takePill":
-            node.cost = node.cost - 20;
-            break;
-        case "kill":
-            node.cost = node.cost + (20 * node.depth);
-            break;
-        case "fly":
-            node.cost = node.cost + 10;
-            break;
-        default:
-            break;
+                break;
+            case "left":
+                node.cost = node.cost + 10;
+                break;
+            case "right":
+                node.cost = node.cost + 10;
+                break;
+            case "carry":
+                if (stringarray[0] != stringarray[5]) // carry shouldn't be in the telphone
+                    node.cost = node.cost - 20;
+                else
+                    node.cost = node.cost + 10;
+                break;
+            case "drop":
+                if (stringarray[0] == stringarray[5]) // drop should be in the telphone only
+                    node.cost = node.cost - 20;
+                else
+                    node.cost = node.cost + 10;
+                break;
+            case "takePill":
+                node.cost = node.cost - 20;
+                break;
+            case "kill":
+                node.cost = node.cost + (20 * node.depth);
+                break;
+            case "fly":
+                node.cost = node.cost + 10;
+                break;
+            default:
+                break;
         }
     }
-    public static void Calculateheuristic1(Node n){
-        String [] state =n.state.split(";");
+
+    public static void Calculateheuristic1(Node n) {
+        String[] state = n.state.split(";");
         String[] NeoCord = state[0].split(",");// [x,y]
         String[] Hostages = state[4].split(",");
         String[] TB = state[5].split(",");
@@ -190,12 +187,13 @@ class searchProblems {
                 }
             }
         }
-        n.H1 = distance+(Hostages.length-(CarriedHostages.length+SavedHostages.length+numberOfKilledHostages));
-        n.SumAStar1 = n.H1+n.cost;
+        n.H1 = distance + (Hostages.length - (CarriedHostages.length + SavedHostages.length + numberOfKilledHostages));
+        n.SumAStar1 = n.H1 + n.cost;
 
     }
-    public static void Calculateheuristic2(Node n){
-        String [] state =n.state.split(";");
+
+    public static void Calculateheuristic2(Node n) {
+        String[] state = n.state.split(";");
         String[] Hostages = state[4].split(",");
         String[] TB = state[5].split(",");
         int TBX = Integer.parseInt(TB[0]);
@@ -204,15 +202,15 @@ class searchProblems {
             String[] HostagesHelper = Hostages[i].split(":");
             int HX = Integer.parseInt(HostagesHelper[1]);
             int HY = Integer.parseInt(HostagesHelper[2]);
-            if(HostagesHelper[3]!="100"){
-            int distance = (int) sqrt((TBY - TBX) * (TBY - TBX) + (HX - HY) * (HX - HY));
-            n.H2 = n.H2+ distance;
+            if (HostagesHelper[3] != "100") {
+                int distance = (int) sqrt((TBY - TBX) * (TBY - TBX) + (HX - HY) * (HX - HY));
+                n.H2 = n.H2 + distance;
             }
         }
-        n.SumAStar2 = n.H2+n.cost;
+        n.SumAStar2 = n.H2 + n.cost;
+    }
 }
-
-static class Matrix {
+class Matrix {
 
     // GLOBAL VARIABLES
     String[] Operators = "up,down,left,right,carry,drop,takePill,kill,fly".split(",");
