@@ -2,13 +2,18 @@ package com.company;
 
 import java.util.*;
 
+import static java.lang.Math.sqrt;
+
 class Node {
     public String state;
     // = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
     // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
-    // +
-    // "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
+    //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
     public Node parent;
+    public int H1;
+    public int H2;
+    public int SumAStar1;
+    public int SumAStar2;
     public String operator;// up:cost+10,down:cost+10,left:cost+10,right:cost+10,carry:cost-10,drop:-10,takePill:-10,kill:+10,fly:+10";
     public int depth;
     public int cost;
@@ -34,7 +39,6 @@ class Node {
         else
             this.path = operator;
     }
-
     // Example Input Grid:
     // 5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;
     // 0,0,30,3,0,80,4,4,80
@@ -99,6 +103,7 @@ class searchProblems {
         } else {
             return false;
         }
+
     }
 
     public boolean isGoalState(Node node) {
@@ -109,6 +114,8 @@ class searchProblems {
         // Chick neo hp isn't 0
         String[] stringarray = node.state.split(";");
         if (isNeoinHome(stringarray) && areHostagesSaved(stringarray) && !isNeoDead(stringarray)) {
+            node.H1=0;
+            node.H2=0;
             return true;
         }
         return false;
@@ -157,10 +164,55 @@ class searchProblems {
             break;
         }
     }
+    public static void Calculateheuristic1(Node n){
+        String [] state =n.state.split(";");
+        String[] NeoCord = state[0].split(",");// [x,y]
+        String[] Hostages = state[4].split(",");
+        String[] TB = state[5].split(",");
+        String[] CarriedHostages = state[2].split(",");
+        String[] SavedHostages = state[6].split(",");
+        String[] killed = state[7].split(",");
+        int NeoX = Integer.parseInt(NeoCord[0]);
+        int NeoY = Integer.parseInt(NeoCord[1]);
+        int TBX = Integer.parseInt(TB[0]);
+        int TBY = Integer.parseInt(TB[1]);
+        int numberoFSaved = (state[6].split(",")).length;
+        int distance = (int) sqrt((NeoY - NeoX) * (NeoY - NeoX) + (TBX - TBY) * (TBX - TBY));
+        int numberOfKilledHostages = 0;
+        for (int i = 0; i < Hostages.length; i++) {
+            String[] Hostage = Hostages[i].split(":");// [H1][30]
+            if (Hostage[1] == "100") { // CHECKS THE Damage
+                String myHostage = Hostage[0];
+                for (int k = 0; k < killed.length; k++) {
+                    if (myHostage == killed[k]) {
+                        numberOfKilledHostages++; // as there is a converted hostage is killed
+                    }
+                }
+            }
+        }
+        n.H1 = distance+(Hostages.length-(CarriedHostages.length+SavedHostages.length+numberOfKilledHostages));
+        n.SumAStar1 = n.H1+n.cost;
 
+    }
+    public static void Calculateheuristic2(Node n){
+        String [] state =n.state.split(";");
+        String[] Hostages = state[4].split(",");
+        String[] TB = state[5].split(",");
+        int TBX = Integer.parseInt(TB[0]);
+        int TBY = Integer.parseInt(TB[1]);
+        for (int i = 0; i < Hostages.length; i++) {// H1:H1X:H1Y:H1D,H2....
+            String[] HostagesHelper = Hostages[i].split(":");
+            int HX = Integer.parseInt(HostagesHelper[1]);
+            int HY = Integer.parseInt(HostagesHelper[2]);
+            if(HostagesHelper[3]!="100"){
+            int distance = (int) sqrt((TBY - TBX) * (TBY - TBX) + (HX - HY) * (HX - HY));
+            n.H2 = n.H2+ distance;
+            }
+        }
+        n.SumAStar2 = n.H2+n.cost;
 }
 
-class Matrix {
+static class Matrix {
 
     // GLOBAL VARIABLES
     String[] Operators = "up,down,left,right,carry,drop,takePill,kill,fly".split(",");
@@ -306,6 +358,8 @@ class Matrix {
         pills = pills.substring(0, pills.length() - 1);
         n.state = OurGrid[2] + ";0;;" + agents + ";" + hostages + ";" + OurGrid[3] + ";" + ";" + pads + ";" + pills
                 + ";" + CarryNumber;
+        searchProblems.Calculateheuristic1(n);
+        searchProblems.Calculateheuristic2(n);
         p.InitialState = n;
         Q.add(n);
 
@@ -485,7 +539,6 @@ class Matrix {
 
     public static Node calculateMove(String action, Node parent) {//
         Node child = new Node("", parent, "", parent.depth + 1, 0, ""); // STATE PARENT OPERATOR DEPTH COST PATH
-        searchProblems.pathCost(child);
         // SPLITTING PARENT STATE
         String[] NodeList = parent.state.split(";");
         String[] NeoCord = NodeList[0].split(",");// [x,y]
@@ -695,7 +748,11 @@ class Matrix {
         newState += ";" + NodeList[5] + ";" + NewSavedHostages + ";" + Killed + ";" + NodeList[8] + ";" + NewPills + ";"
                 + NodeList[10];
         child.state = newState;
+        searchProblems.pathCost(child);
+        searchProblems.Calculateheuristic1(child);
+        searchProblems.Calculateheuristic2(child);
         return child;
+
     }
 
     public static void FIFO(Queue<Node> Q, Node n) {
@@ -841,19 +898,163 @@ class Matrix {
     }
 
     public static String greedySearchOne(Queue<Node> Q) {
-        return "";
+        searchProblems p = new searchProblems();
+        Queue<Node> Qnew = stateSpace(Q.remove());
+        int nodes = 1;
+        while (!Qnew.isEmpty())
+            Q.add(Qnew.remove());
+        while (!p.isGoalState(Q.peek())) {
+            Queue<Node> children = stateSpace(Q.remove());
+            if (!children.isEmpty()) {
+                nodes++;
+                Q.add(children.peek());
+                greedySortQueue1(new LinkedList<>(), Q);
+            }
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
+        int kills = stateAttributes[7].split(",").length;
+        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+    }
+
+    private static Queue<Node> greedySortQueue1(Queue<Node> Qnew, Queue<Node> Q) {
+        if (Q.size() == 1)
+            Qnew.add(Q.remove());
+        else {
+            Node minValue = new Node();
+            minValue.H1 = Integer.MAX_VALUE;
+            int minIndex = -1;
+            for (int i = 0; i < Q.size(); i++) {
+                if (elementAt(Q, i).H1 <= minValue.H1) {
+                    minValue = elementAt(Q, i);
+                    minIndex = i;
+                }
+            }
+            Qnew.add(minValue);
+            removeAt(Q, minIndex);
+            greedySortQueue1(Qnew, Q);
+        }
+        return Qnew;
     }
 
     public static String greedySearchTwo(Queue<Node> Q) {
-        return "";
+        searchProblems p = new searchProblems();
+        Queue<Node> Qnew = stateSpace(Q.remove());
+        int nodes = 1;
+        while (!Qnew.isEmpty())
+            Q.add(Qnew.remove());
+        while (!p.isGoalState(Q.peek())) {
+            Queue<Node> children = stateSpace(Q.remove());
+            if (!children.isEmpty()) {
+                nodes++;
+                Q.add(children.peek());
+                greedySortQueue2(new LinkedList<>(), Q);
+            }
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
+        int kills = stateAttributes[7].split(",").length;
+        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+    }
+
+    private static Queue<Node> greedySortQueue2(Queue<Node> Qnew, Queue<Node> Q) {
+        if (Q.size() == 1)
+            Qnew.add(Q.remove());
+        else {
+            Node minValue = new Node();
+            minValue.H2 = Integer.MAX_VALUE;
+            int minIndex = -1;
+            for (int i = 0; i < Q.size(); i++) {
+                if (elementAt(Q, i).H2 <= minValue.H2) {
+                    minValue = elementAt(Q, i);
+                    minIndex = i;
+                }
+            }
+            Qnew.add(minValue);
+            removeAt(Q, minIndex);
+            greedySortQueue2(Qnew, Q);
+        }
+        return Qnew;
     }
 
     public static String aStarOne(Queue<Node> Q) {
-        return "";
+        searchProblems p = new searchProblems();
+        Queue<Node> Qnew = stateSpace(Q.remove());
+        int nodes = 1;
+        while (!Qnew.isEmpty())
+            Q.add(Qnew.remove());
+        while (!p.isGoalState(Q.peek())) {
+            Queue<Node> children = stateSpace(Q.remove());
+            if (!children.isEmpty()) {
+                nodes++;
+                Q.add(children.peek());
+                aStarSortQueue1(new LinkedList<>(), Q);
+            }
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
+        int kills = stateAttributes[7].split(",").length;
+        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
     public static String aStarTwo(Queue<Node> Q) {
-        return "";
+        searchProblems p = new searchProblems();
+        Queue<Node> Qnew = stateSpace(Q.remove());
+        int nodes = 1;
+        while (!Qnew.isEmpty())
+            Q.add(Qnew.remove());
+        while (!p.isGoalState(Q.peek())) {
+            Queue<Node> children = stateSpace(Q.remove());
+            if (!children.isEmpty()) {
+                nodes++;
+                Q.add(children.peek());
+                aStarSortQueue2(new LinkedList<>(), Q);
+            }
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
+        int kills = stateAttributes[7].split(",").length;
+        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+    }
+
+    private static Queue<Node> aStarSortQueue1(Queue<Node> Qnew, Queue<Node> Q) {
+        if (Q.size() == 1)
+            Qnew.add(Q.remove());
+        else {
+            Node minValue = new Node();
+            minValue.SumAStar1 = Integer.MAX_VALUE;
+            int minIndex = -1;
+            for (int i = 0; i < Q.size(); i++) {
+                if (elementAt(Q, i).SumAStar1 <= minValue.SumAStar1) {
+                    minValue = elementAt(Q, i);
+                    minIndex = i;
+                }
+            }
+            Qnew.add(minValue);
+            removeAt(Q, minIndex);
+            aStarSortQueue1(Qnew, Q);
+        }
+        return Qnew;
+    }
+
+    private static Queue<Node> aStarSortQueue2(Queue<Node> Qnew, Queue<Node> Q) {
+        if (Q.size() == 1)
+            Qnew.add(Q.remove());
+        else {
+            Node minValue = new Node();
+            minValue.SumAStar2 = Integer.MAX_VALUE;
+            int minIndex = -1;
+            for (int i = 0; i < Q.size(); i++) {
+                if (elementAt(Q, i).SumAStar2 <= minValue.SumAStar2) {
+                    minValue = elementAt(Q, i);
+                    minIndex = i;
+                }
+            }
+            Qnew.add(minValue);
+            removeAt(Q, minIndex);
+            aStarSortQueue2(Qnew, Q);
+        }
+        return Qnew;
     }
 
     public static void main(String[] args) {
