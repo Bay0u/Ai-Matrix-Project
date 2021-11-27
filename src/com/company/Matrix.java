@@ -173,7 +173,7 @@ class searchProblems {
         int NeoY = Integer.parseInt(NeoCord[1]);
         int TBX = Integer.parseInt(TB[0]);
         int TBY = Integer.parseInt(TB[1]);
-        int numberoFSaved = (state[6].split(",")).length;
+        //int numberoFSaved = (state[6].split(",")).length;
         int distance = (int) sqrt((NeoY - NeoX) * (NeoY - NeoX) + (TBX - TBY) * (TBX - TBY));
         int numberOfKilledHostages = 0;
         for (int i = 0; i < Hostages.length; i++) {
@@ -824,7 +824,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                Q.add(children.peek());
+                Q.add(children.remove());
             }
         }
         String[] stateAttributes = Q.peek().state.split(";");
@@ -843,7 +843,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                FIFO(Q, children.peek());
+                FIFO(Q, children.remove());
             }
         }
         String[] stateAttributes = Q.peek().state.split(";");
@@ -864,7 +864,7 @@ class Matrix {
                 Queue<Node> children = stateSpace(Q.remove());
                 if (!children.isEmpty()) {
                     nodes++;
-                    Q.add(children.peek());
+                    Q.add(children.remove());
                 }
             }
             limit++;
@@ -885,7 +885,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                Q.add(children.peek());
+                Q.add(children.remove());
                 sortQueue(new LinkedList<>(), Q);
             }
         }
@@ -905,7 +905,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                Q.add(children.peek());
+                Q.add(children.remove());
                 greedySortQueue1(new LinkedList<>(), Q);
             }
         }
@@ -945,7 +945,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                Q.add(children.peek());
+                Q.add(children.remove());
                 greedySortQueue2(new LinkedList<>(), Q);
             }
         }
@@ -985,7 +985,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                Q.add(children.peek());
+                Q.add(children.remove());
                 aStarSortQueue1(new LinkedList<>(), Q);
             }
         }
@@ -1005,7 +1005,7 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
-                Q.add(children.peek());
+                Q.add(children.remove());
                 aStarSortQueue2(new LinkedList<>(), Q);
             }
         }
