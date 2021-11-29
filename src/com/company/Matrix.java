@@ -416,10 +416,8 @@ class Matrix {
                 out = "";
         }
 
-        if (visualize) {
-            String[] path = out.split(";")[0].split(",");
-            visualize(path, grid);
-        }
+        if (visualize)
+            visualize(goalStatePath, grid);
 
         return out;
     }
@@ -434,9 +432,11 @@ class Matrix {
         return arr2;
     }
 
-    public static void visualize(String[] path, String grid) {
-        if (path.length == 0)
+    public static void visualize(ArrayList<String> path, String grid) {
+        visualize(grid);
+        if (path.size() == 0)
             return;
+        
         String MN = grid.split(";")[0];
         String C = grid.split(";")[1];
         String NeoX = grid.split(";")[2].split(",")[0];
@@ -446,16 +446,19 @@ class Matrix {
         String Pills = grid.split(";")[5];
         String Pads = grid.split(";")[6];
         String Hostages = grid.split(";")[7];
-        String state = NeoX + "," + NeoY + ";" + "0" + ";;" + Agents + ";" + Hostages + ";" + TeleXTeleY + ";;;" + Pads
-                + ";" + Pills + ";" + C;
+
         // = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
         // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
         // +"HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber"
-        Node newNode = calculateMove(path[0], new Node(state, null, "", 0, 0, ""));
-        NeoX = newNode.state.split(";")[0].split(",")[0];
-        NeoY = newNode.state.split(";")[0].split(",")[1];
-        C = Integer.parseInt(C) - newNode.state.split(";")[2].split(",").length + "";
-        String[] TotalAgents = newNode.state.split(";")[3].split(",");
+
+        String lastState = path.get(path.size()-1);
+
+        NeoX = lastState.split(";")[0].split(",")[0];
+        NeoY = lastState.split(";")[0].split(",")[1];
+
+        C = Integer.parseInt(C) - lastState.split(";")[2].split(",").length + "";
+
+        String[] TotalAgents = lastState.split(";")[3].split(",");
         for (int i = 0; i < TotalAgents.length; i++) {
             TotalAgents[i] = TotalAgents[i].substring(3, TotalAgents[i].length());
             TotalAgents[i] = TotalAgents[i].replace(':', ',');
@@ -464,8 +467,10 @@ class Matrix {
         for (int i = 0; i < TotalAgents.length; i++)
             Agents += TotalAgents[i] + ",";
         Agents = Agents.substring(0, Agents.length() - 1);
-        Pills = newNode.state.split(";")[9];
-        String[] TotalHostages = newNode.state.split(";")[4].split(",");
+
+        Pills = lastState.split(";")[9];
+
+        String[] TotalHostages = lastState.split(";")[4].split(",");
         for (int i = 0; i < TotalHostages.length; i++) {
             TotalHostages[i] = TotalHostages[i].substring(3, TotalHostages[i].length());
             TotalAgents[i] = TotalHostages[i].replace(':', ',');
@@ -474,10 +479,11 @@ class Matrix {
         for (int i = 0; i < TotalHostages.length; i++)
             Hostages += TotalHostages[i] + ",";
         Hostages = Hostages.substring(0, Hostages.length() - 1);
+
         String newGrid = MN + ";" + C + ";" + NeoX + "," + NeoY + ";" + TeleXTeleY + ";" + Agents + ";" + Pills + ";"
                 + Pads + ";" + Hostages;
-        visualize(newGrid);
-        visualize(removeElementAt(0, path), newGrid);
+        path.remove(path.size()-1);
+        visualize(path, newGrid);
     }
 
     public static boolean checkstate(Node n) {
