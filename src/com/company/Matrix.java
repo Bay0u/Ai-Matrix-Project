@@ -436,7 +436,7 @@ class Matrix {
         visualize(grid);
         if (path.size() == 0)
             return;
-        
+
         String MN = grid.split(";")[0];
         String C = grid.split(";")[1];
         String NeoX = grid.split(";")[2].split(",")[0];
@@ -451,12 +451,11 @@ class Matrix {
         // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
         // +"HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber"
 
-        String lastState = path.get(path.size()-1);
-
+        String lastState = path.get(path.size() - 1); //"2,4;0;;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2"
         NeoX = lastState.split(";")[0].split(",")[0];
         NeoY = lastState.split(";")[0].split(",")[1];
 
-        C = Integer.parseInt(C) - lastState.split(";")[2].split(",").length + "";
+        C = lastState.split(";")[10];
 
         String[] TotalAgents = lastState.split(";")[3].split(",");
         for (int i = 0; i < TotalAgents.length; i++) {
@@ -473,7 +472,7 @@ class Matrix {
         String[] TotalHostages = lastState.split(";")[4].split(",");
         for (int i = 0; i < TotalHostages.length; i++) {
             TotalHostages[i] = TotalHostages[i].substring(3, TotalHostages[i].length());
-            TotalAgents[i] = TotalHostages[i].replace(':', ',');
+            TotalHostages[i] = TotalHostages[i].replace(':', ',');
         }
         Hostages = "";
         for (int i = 0; i < TotalHostages.length; i++)
@@ -482,7 +481,8 @@ class Matrix {
 
         String newGrid = MN + ";" + C + ";" + NeoX + "," + NeoY + ";" + TeleXTeleY + ";" + Agents + ";" + Pills + ";"
                 + Pads + ";" + Hostages;
-        path.remove(path.size()-1);
+        System.out.println(newGrid);
+        path.remove(path.size() - 1);
         visualize(path, newGrid);
     }
 
@@ -553,17 +553,18 @@ class Matrix {
         }
 
         // HOSTAGES
-        for (int i = 0; i < table[7].split(",").length; i += 3) {
-            String[] hostages = table[7].split(",");
-            grid[Integer.parseInt(hostages[i])][Integer.parseInt(hostages[i + 1])] = "H (" + hostages[i + 2] + ")";
-        }
+        if (table[7].length() != 0)
+            for (int i = 0; i < table[7].split(",").length; i += 3) {
+                String[] hostages = table[7].split(",");
+                grid[Integer.parseInt(hostages[i])][Integer.parseInt(hostages[i + 1])] = "H (" + hostages[i + 2] + ")";
+            }
 
-        // System.out.print(Arrays.deepToString(grid));
-        for (int i = 0; i < grid.length; i++) {
-            System.out.println();
-            for (int j = 0; j < grid[0].length; j++)
-                System.out.print(grid[i][j] + ", ");
-        }
+        System.out.println(Arrays.deepToString(grid));
+        // for (int i = 0; i < grid.length; i++) {
+        // System.out.println();
+        // for (int j = 0; j < grid[0].length; j++)
+        // System.out.print(grid[i][j] + ", ");
+        // }
     }
 
     public static Queue<Node> stateSpace(Node n) {
@@ -1400,13 +1401,21 @@ class Matrix {
     }
 
     public static void main(String[] args) {
-        // String example =
-        // "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
-        // visualize(example);
+        String grid = "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
+        visualize(grid);
         // genGrid();
         // String ss = "a,b";
         // System.out.println(ss.split(",").length);
         // for (Node s : Qnew)
         // System.out.print(s.cost);
+        ArrayList<String> path = new ArrayList<>();
+        path.add("1,2;0;;A0:0:3,A2:1:4;H0:1:2:100,H3:1:2:74;1,2;H3,H0;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        path.add("1,2;0;H3,H0;A0:0:3,A2:1:4;H0:1:2:99,H3:1:2:72;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        path.add("2,2;0;H3,H0;A0:0:3,A2:1:4;H0:2:2:97,H3:2:2:70;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        path.add("2,2;0;H3;A0:0:3,A2:1:4;H0:2:2:95,H3:2:2:68;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        path.add("2,3;0;H3;A0:0:3,A2:1:4;H0:2:2:93,H3:2:3:66;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        path.add("2,4;0;H3;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        path.add("2,4;0;;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
+        visualize(path, grid);
     }
 }
