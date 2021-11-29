@@ -370,7 +370,6 @@ class Matrix {
         //HX,HY,HD
         n.state = OurGrid[2] + ";0;;" + agents + ";" + hostages + ";" + OurGrid[3] + ";" + ";" + ";" +pads + ";" + pills
                 + ";" + CarryNumber;
-        System.out.println("saved" +n.state.split(";")[6].length());
         searchProblems.Calculateheuristic1(n);
         searchProblems.Calculateheuristic2(n);
         stateSet.add(n.state);
@@ -382,20 +381,28 @@ class Matrix {
         switch (strategy) {
         case "BF":
             out = breadthFirst(Q);
+            break;
         case "DF":
             out = depthFirst(Q);
+            break;
         case "ID":
             out = iterativeDeepeningSearch(Q);
+            break;
         case "UC":
             out = uniformCostSearch(Q);
+            break;
         case "GR1":
             out = greedySearchOne(Q);
+            break;
         case "GR2":
             out = greedySearchTwo(Q);
+            break;
         case "AS1":
             out = aStarOne(Q);
+            break;
         case "AS2":
             out = aStarTwo(Q);
+            break;
         default:
             out = "";
         }
@@ -404,6 +411,7 @@ class Matrix {
 //            String[] path = out.split(";")[0].split(",");
 //
 //        }
+        System.out.println(out);
         return out;
     }
     public static boolean checkstate(Node n){
@@ -604,13 +612,14 @@ class Matrix {
         for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
             String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
             if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) & !TB.equals(NeoC)){
-                if (CarryNumber > CarriedHostages.length){
+                if (CarryNumber > CarriedHostages.length || NodeList[2].isEmpty()){
                     action = calculateMove("carry", n);
                     if(!checkstate(action)){
                         Children.add(action);
                         stateSet.add(action.state);
                         }
                 }
+
             }
         }
         if (NodeList[0].equals(NodeList[5])) { // DROP
@@ -740,9 +749,10 @@ class Matrix {
             break;
         case "carry":
             System.out.println("oldC"+NewCarriedHostages);
+            NewCarriedHostages="";
             for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) {
                 String[] HostagesHelper = Hostages[i].split(":");
-                if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2])) {
+                if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) && !NewCarriedHostages.contains(HostagesHelper[0])) {
                     if (NewCarriedHostages.length() != 0)
                         NewCarriedHostages += ",";
                     NewCarriedHostages += HostagesHelper[0];
@@ -982,6 +992,7 @@ class Matrix {
         }
         System.out.println("safe"+Q.peek().state.split(";")[6]);
         while (p.isGoalState(Q.peek()) == 0) {
+            System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
             nodes++;
             while (!children.isEmpty()) {
@@ -998,7 +1009,7 @@ class Matrix {
         for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
             String[] HostagesHelper = HostageArray[i].split(":");
             for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
-                if(SavedHostageArray[j].equals(HostagesHelper[0])&& HostagesHelper[3].equals("100")){
+                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
                     deaths++;
                 }
             }
@@ -1015,11 +1026,14 @@ class Matrix {
         }
         Node lastNode = Q.peek();
         while(lastNode.parent != null) {
-            path = lastNode.operator + "," +path;
+            if(!path.isEmpty()){
+            path = lastNode.operator + "," +path;}
+            else{
+                path = lastNode.operator;
+            }
             lastNode = lastNode.parent;
         }
-        System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
-
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
         return path + ";" + deaths + ";" + kills + ";" + nodes;
 
     }
