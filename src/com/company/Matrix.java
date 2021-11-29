@@ -653,25 +653,21 @@ class Matrix {
                     //System.out.println("number : " +agentHelper.length);
                     if ((Integer.parseInt(NeoX) - 1) == Integer.parseInt(agentHelper[1]) && NeoY.equals(agentHelper[2])) {
                         isagenthere =true;
-                        System.out.println("fe agent hena" + n.depth);
-                        if(ishostagehere && !haveenoughcarry || !ishostagehere){
-                            System.out.println("2atalto" + n.depth);
-                            kill = true;
+                        //System.out.println("fe agent hena" + n.depth);
+                        if (NeoDamage < 80) {
+                                action = calculateMove("kill", n);//A1,x,y
+                                if (!checkstate(action)) {
+                                    //System.out.println("2tlt : " +agentHelper.length);
+                                    agentkilled = true;
+                                    Children.add(action);
+                                    stateSet.add(action.state);
+                                }
                         }
-//                            if (NeoDamage < 80) {
-//                                action = calculateMove("kill", n);//A1,x,y
-//                                if (!checkstate(action)) {
-//                                    //System.out.println("2tlt : " +agentHelper.length);
-//                                    agentkilled = true;
-//                                    Children.add(action);
-//                                    stateSet.add(action.state);
-//                                }
-//                            }
                     }
                 }
                 //System.out.println();
             }
-            if (!isagenthere) {
+            if (!isagenthere || agentkilled) {
                 //System.out.println("move up");
                 action = calculateMove("up", n);
                 if (!checkstate(action)) {
@@ -687,26 +683,23 @@ class Matrix {
                 String[] agentHelper = Agents[i].split(":");
                 if (!Agents[i].isEmpty()) {
                     //System.out.println("number : " +agentHelper.length);
-                    if ((Integer.parseInt(NeoX) + 1) == Integer.parseInt(agentHelper[1]) && NeoY.equals(agentHelper[2])) {
+                    if ((Integer.parseInt(NeoX) + 1) == Integer.parseInt(agentHelper[1]) && NeoY.equals(agentHelper[2]) && NeoDamage>80) {
                         isagenthere =true;
-                        System.out.println("fe agent hena" + n.depth);
-                        if(ishostagehere && !haveenoughcarry || !ishostagehere){
-                            System.out.println("2atalto" + n.depth);
-                            kill = true;
-                        }//                        if (NeoDamage < 80) {
-//                            action = calculateMove("kill", n);//A1,x,y
-//                            if (!checkstate(action)) {
-//                                agentkilled = true;
-//                                Children.add(action);
-//                                stateSet.add(action.state);
-//                            }
-//                        }
+                        //System.out.println("fe agent hena" + n.depth);
+                        if (NeoDamage < 80 ) {
+                            action = calculateMove("kill", n);
+                            if (!checkstate(action)) {
+                                agentkilled = true;
+                                Children.add(action);
+                                stateSet.add(action.state);
+                            }
+                        }
                     }
                 }
                 //System.out.println();
             }
 
-            if (!isagenthere) {
+            if (!isagenthere || agentkilled) {
                 action = calculateMove("down", n);
                 if (!checkstate(action)) {
                     Children.add(action);
@@ -723,21 +716,18 @@ class Matrix {
 
                     if (NeoX.equals(agentHelper[1]) && (Integer.parseInt(NeoY) - 1) == Integer.parseInt(agentHelper[2]))
                         isagenthere =true;
-                    System.out.println("fe agent hena" + n.depth);
-                    if(ishostagehere && !haveenoughcarry || !ishostagehere){
-                        System.out.println("2atalto" + n.depth);
-                        kill = true;
-                    }//                    if (NeoDamage < 80 ) {
-//                        action = calculateMove("kill", n);
-//                        if (!checkstate(action)) {
-//                            agentkilled = true;
-//                            Children.add(action);
-//                            stateSet.add(action.state);
-//                        }
-//                    }
+                   // System.out.println("fe agent hena" + n.depth);
+                    if (NeoDamage < 80 ) {
+                        action = calculateMove("kill", n);
+                        if (!checkstate(action)) {
+                            agentkilled = true;
+                            Children.add(action);
+                            stateSet.add(action.state);
+                        }
+                    }
                 }
             }
-            if (!isagenthere) {
+            if (!isagenthere || agentkilled) {
                 action = calculateMove("left", n);
                 if (!checkstate(action)) {
                     Children.add(action);
@@ -753,22 +743,18 @@ class Matrix {
                 if (!Agents[i].isEmpty()) {
                     if (NeoX.equals(agentHelper[1]) && (Integer.parseInt(NeoY) + 1) == Integer.parseInt(agentHelper[2]))
                         isagenthere =true;
-                    System.out.println("fe agent hena" + n.depth);
-                    if(ishostagehere && !haveenoughcarry || !ishostagehere){
-                        System.out.println("2atalto" + n.depth);
-                        kill = true;
+                    //System.out.println("fe agent hena" + n.depth);
+                    if (NeoDamage < 80) {
+                        action = calculateMove("kill", n);
+                        if (!checkstate(action)) {
+                            agentkilled = true;
+                            Children.add(action);
+                            stateSet.add(action.state);
+                        }
                     }
-                    //                    if (NeoDamage < 80) {
-//                        action = calculateMove("kill", n);
-//                        if (!checkstate(action)) {
-//                            agentkilled = true;
-//                            Children.add(action);
-//                            stateSet.add(action.state);
-//                        }
-//                    }
                 }
             }
-            if (!isagenthere) {
+            if (!isagenthere || agentkilled) {
                 action = calculateMove("right", n);
                 if (!checkstate(action)) {
                     Children.add(action);
@@ -776,19 +762,8 @@ class Matrix {
                     //agentkilled = false;
                 }
             }
-
         }
-        if(kill){
-            if (NeoDamage < 80 ) {
-                action = calculateMove("kill", n);
-                if (!checkstate(action)) {
-                    //agentkilled = true;
-                    Children.add(action);
-                    stateSet.add(action.state);
-                }
-            }
-        }
-
+        //System.out.println(Children.peek().state);
         return Children;
     }
 
@@ -809,11 +784,11 @@ class Matrix {
                 if (CarryNumber >= CarriedHostages.length || NodeList[2].isEmpty()){
                     return true;
                 }
-
             }
         }
         return false;
     }
+
 
     public static Node calculateMove(String action, Node parent) {//
         Node child = new Node("", parent, "", parent.depth + 1, 0, ""); // STATE PARENT OPERATOR DEPTH COST PATH
