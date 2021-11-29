@@ -442,7 +442,7 @@ class Matrix {
         // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
         // +"HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber"
 
-        String lastState = path.get(path.size() - 1); //"2,4;0;;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2"
+        String lastState = path.get(path.size() - 1); // "2,4;0;;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2"
         NeoX = lastState.split(";")[0].split(",")[0];
         NeoY = lastState.split(";")[0].split(",")[1];
 
@@ -519,35 +519,62 @@ class Matrix {
         // NEO
         int NeoX = Integer.parseInt(table[2].split(",")[0]);
         int NeoY = Integer.parseInt(table[2].split(",")[1]);
-        grid[NeoX][NeoY] = "Neo";
+        if (grid[NeoX][NeoY] != null)
+            grid[NeoX][NeoY] += " + Neo";
+        else
+            grid[NeoX][NeoY] = "Neo";
 
         // TELEPHONE BOOTH
         int TelephoneX = Integer.parseInt(table[3].split(",")[0]);
         int TelephoneY = Integer.parseInt(table[3].split(",")[1]);
-        grid[TelephoneX][TelephoneY] = "TB";
+        if (grid[TelephoneX][TelephoneY] != null)
+            grid[TelephoneX][TelephoneY] += " + TB";
+        else
+            grid[TelephoneX][TelephoneY] = "TB";
 
         // AGENTS
-        for (int i = 0; i < table[4].split(",").length; i += 2)
-            grid[Integer.parseInt(table[4].split(",")[i])][Integer.parseInt(table[4].split(",")[i + 1])] = "A";
+        for (int i = 0; i < table[4].split(",").length; i += 2) {
+            if (grid[Integer.parseInt(table[4].split(",")[i])][Integer.parseInt(table[4].split(",")[i + 1])] != null)
+                grid[Integer.parseInt(table[4].split(",")[i])][Integer.parseInt(table[4].split(",")[i + 1])] += " + A";
+            else
+                grid[Integer.parseInt(table[4].split(",")[i])][Integer.parseInt(table[4].split(",")[i + 1])] = "A";
+        }
 
         // PILLS
-        for (int i = 0; i < table[5].split(",").length; i += 2)
-            grid[Integer.parseInt(table[5].split(",")[i])][Integer.parseInt(table[5].split(",")[i + 1])] = "P";
+        for (int i = 0; i < table[5].split(",").length; i += 2) {
+            if (grid[Integer.parseInt(table[5].split(",")[i])][Integer.parseInt(table[5].split(",")[i + 1])] != null)
+                grid[Integer.parseInt(table[5].split(",")[i])][Integer.parseInt(table[5].split(",")[i + 1])] += " + P";
+            else
+                grid[Integer.parseInt(table[5].split(",")[i])][Integer.parseInt(table[5].split(",")[i + 1])] = "P";
+        }
 
         // LAUNCH PADS
         for (int i = 0; i < table[6].split(",").length; i += 4) {
             String[] pads = table[6].split(",");
-            grid[Integer.parseInt(pads[i])][Integer.parseInt(pads[i + 1])] = "Pad (" + pads[i + 2] + "," + pads[i + 3]
-                    + ")";
-            grid[Integer.parseInt(pads[i + 2])][Integer.parseInt(pads[i + 3])] = "Pad (" + pads[i] + "," + pads[i + 1]
-                    + ")";
+            if (grid[Integer.parseInt(pads[i])][Integer.parseInt(pads[i + 1])] != null)
+                grid[Integer.parseInt(pads[i])][Integer.parseInt(pads[i + 1])] += " + Pad (" + pads[i + 2] + ","
+                        + pads[i + 3] + ")";
+            else
+                grid[Integer.parseInt(pads[i])][Integer.parseInt(pads[i + 1])] = "Pad (" + pads[i + 2] + ","
+                        + pads[i + 3] + ")";
+            if (grid[Integer.parseInt(pads[i + 2])][Integer.parseInt(pads[i + 3])] != null)
+                grid[Integer.parseInt(pads[i + 2])][Integer.parseInt(pads[i + 3])] += " + Pad (" + pads[i] + ","
+                        + pads[i + 1] + ")";
+            else
+                grid[Integer.parseInt(pads[i + 2])][Integer.parseInt(pads[i + 3])] = "Pad (" + pads[i] + ","
+                        + pads[i + 1] + ")";
         }
 
         // HOSTAGES
         if (table[7].length() != 0)
             for (int i = 0; i < table[7].split(",").length; i += 3) {
                 String[] hostages = table[7].split(",");
-                grid[Integer.parseInt(hostages[i])][Integer.parseInt(hostages[i + 1])] = "H (" + hostages[i + 2] + ")";
+                if (grid[Integer.parseInt(hostages[i])][Integer.parseInt(hostages[i + 1])] != null)
+                    grid[Integer.parseInt(hostages[i])][Integer.parseInt(hostages[i + 1])] += " + H (" + hostages[i + 2]
+                            + ")";
+                else
+                    grid[Integer.parseInt(hostages[i])][Integer.parseInt(hostages[i + 1])] = "H (" + hostages[i + 2]
+                            + ")";
             }
 
         System.out.println(Arrays.deepToString(grid));
@@ -1392,7 +1419,9 @@ class Matrix {
     }
 
     public static void main(String[] args) {
-        String grid = "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
+        // String grid =
+        // "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
+        String grid0 = "5,5;2;3,4;1,2;0,3,1,4;2,3;4,4,0,2,0,2,4,4;2,2,91,2,4,62";
         // visualize(grid);
         // genGrid();
         // String ss = "a,b";
@@ -1407,6 +1436,6 @@ class Matrix {
         path.add("2,3;0;H3;A0:0:3,A2:1:4;H0:2:2:93,H3:2:3:66;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
         path.add("2,4;0;H3;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
         path.add("2,4;0;;A0:0:3,A2:1:4;H0:2:2:93,H3:2:4:64;1,2;;;SP0:4:4,FP0:0:2,SP4:0:2,FP4:4:4;2,3;2");
-        visualize(path, grid);
+        visualize(path, grid0);
     }
 }
