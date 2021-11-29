@@ -611,7 +611,7 @@ class Matrix {
             String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
             if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) & !TB.equals(NeoC)){
                 ishostagehere = true;
-                if (CarryNumber >= CarriedHostages.length || NodeList[2].isEmpty()){
+                if (CarryNumber > CarriedHostages.length || (NodeList[2].isEmpty() && CarryNumber>0)){
                     haveenoughcarry = true;
                     action = calculateMove("carry", n);
                     if(!checkstate(action)){
@@ -767,27 +767,27 @@ class Matrix {
         return Children;
     }
 
-    private static boolean Carrynow(Node n) {
-        String[] NodeList = n.state.split(";");
-        String[] NeoCord = NodeList[0].split(",");// [x,y]
-        String[] Hostages = NodeList[4].split(",");
-        String NeoX = NeoCord[0];
-        String NeoY = NeoCord[1];
-        String[] CarriedHostages = NodeList[2].split(",");
-        String TB = NodeList[5];
-        String NeoC = NodeList[0];
-        int CarryNumber = Integer.parseInt(NodeList[10]);
-
-        for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
-            String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-            if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) & !TB.equals(NeoC)){
-                if (CarryNumber >= CarriedHostages.length || NodeList[2].isEmpty()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+//    private static boolean Carrynow(Node n) {
+//        String[] NodeList = n.state.split(";");
+//        String[] NeoCord = NodeList[0].split(",");// [x,y]
+//        String[] Hostages = NodeList[4].split(",");
+//        String NeoX = NeoCord[0];
+//        String NeoY = NeoCord[1];
+//        String[] CarriedHostages = NodeList[2].split(",");
+//        String TB = NodeList[5];
+//        String NeoC = NodeList[0];
+//        int CarryNumber = Integer.parseInt(NodeList[10]);
+//
+//        for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
+//            String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
+//            if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) & !TB.equals(NeoC)){
+//                if (CarryNumber >= CarriedHostages.length || NodeList[2].isEmpty()){
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
 
     public static Node calculateMove(String action, Node parent) {//
@@ -1048,7 +1048,7 @@ class Matrix {
                 }
             }
             if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) & !NodeList[0].equals(NodeList[5])){ //if he will be carried
-                if (CarryNumber >= CarriedHostages.length || NodeList[2].isEmpty()){
+                if (CarryNumber > CarriedHostages.length || (NodeList[2].isEmpty() && CarryNumber>0)){
                     isCarried = true;
                 }
             }
