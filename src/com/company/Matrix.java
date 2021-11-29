@@ -51,7 +51,7 @@ class searchProblems {
     // goal test
     // path cost
 
-    public boolean isGoalState(Node node) {
+    public int isGoalState(Node node) {
         // chick place neo x,y = telephone
         // chick total number of Hostages == [saved Hostages + Killed Hostages whose
         // changed to agent]
@@ -111,10 +111,10 @@ class searchProblems {
         //System.out.println("savedddd"+stringarray[6].length());
         if (isNeoinHome && areHostagesSaved && !isNeoDead) {
             //System.out.println("hi");
-            return true;
+            return 1;
 
         }else{
-        return false;
+        return 0;
         }
     }
 
@@ -1030,7 +1030,7 @@ class Matrix {
             Q.add(Qnew.remove());
         }
         //System.out.println("safe"+Q.peek().state.split(";")[6]);
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             //System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
             nodes++;
@@ -1064,7 +1064,7 @@ class Matrix {
         }
         Node lastNode = Q.peek();
         //System.out.println(lastNode.state);
-        while (!p.isGoalState(Q.peek())) {
+        while(lastNode.parent != null) {
             System.out.println(lastNode.state);
             if(!path.isEmpty()){
             path = lastNode.operator + "," +path;
@@ -1084,7 +1084,7 @@ class Matrix {
         int nodes = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
@@ -1104,7 +1104,7 @@ class Matrix {
         int limit = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             while (Q.peek().depth == limit) {
                 Queue<Node> children = stateSpace(Q.remove());
                 if (!children.isEmpty()) {
@@ -1128,7 +1128,7 @@ class Matrix {
         int nodes = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
@@ -1156,7 +1156,7 @@ class Matrix {
         int nodes = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
@@ -1196,7 +1196,7 @@ class Matrix {
         int nodes = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
@@ -1236,7 +1236,7 @@ class Matrix {
         int nodes = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
@@ -1256,7 +1256,7 @@ class Matrix {
         int nodes = 1;
         while (!Qnew.isEmpty())
             Q.add(Qnew.remove());
-        while (!p.isGoalState(Q.peek())) {
+        while (p.isGoalState(Q.peek()) == 0) {
             Queue<Node> children = stateSpace(Q.remove());
             if (!children.isEmpty()) {
                 nodes++;
