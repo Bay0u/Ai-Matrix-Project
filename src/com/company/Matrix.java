@@ -423,15 +423,6 @@ class Matrix {
     }
 
     // HELPERS
-    public static String[] removeElementAt(int index, String[] arr) {
-        if (arr == null || index < 0 || index >= arr.length)
-            return arr;
-        String[] arr2 = new String[arr.length - 1];
-        System.arraycopy(arr, 0, arr2, 0, index);
-        System.arraycopy(arr, index + 1, arr2, index, arr.length - index - 1);
-        return arr2;
-    }
-
     public static void visualize(ArrayList<String> path, String grid) {
         visualize(grid);
         if (path.size() == 0)
@@ -1402,7 +1393,7 @@ class Matrix {
 
     public static void main(String[] args) {
         String grid = "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
-        visualize(grid);
+        // visualize(grid);
         // genGrid();
         // String ss = "a,b";
         // System.out.println(ss.split(",").length);
