@@ -149,12 +149,14 @@ public class TestMatrixPublic {
     @Test(timeout = 10000)
     public void testb4() throws Exception {
         String solution = Matrix.solve(grid4, "DF", false);
+        System.out.println(solution);
         assertTrue("The output actions do not lead to a goal state.", solution.equals("No Solution"));
     }
 
     @Test(timeout = 10000)
     public void testb5() throws Exception {
         String solution = Matrix.solve(grid5, "DF", false);
+        System.out.println(solution);
         solution = solution.replace(" ", "");
         assertTrue("The output actions do not lead to a goal state.", applyPlan(grid5, solution));
     }
@@ -162,6 +164,7 @@ public class TestMatrixPublic {
     @Test(timeout = 10000)
     public void testb6() throws Exception {
         String solution = Matrix.solve(grid6, "DF", false);
+        System.out.println(solution);
         solution = solution.replace(" ", "");
         assertTrue("The output actions do not lead to a goal state.", applyPlan(grid6, solution));
     }
@@ -169,6 +172,7 @@ public class TestMatrixPublic {
     @Test(timeout = 30000)
     public void testb7() throws Exception {
         String solution = Matrix.solve(grid7, "DF", false);
+        System.out.println(solution);
         solution = solution.replace(" ", "");
         assertTrue("The output actions do not lead to a goal state.",applyPlan(grid7, solution) );
     }
@@ -176,6 +180,7 @@ public class TestMatrixPublic {
     @Test(timeout = 30000)
     public void testb8() throws Exception {
         String solution = Matrix.solve(grid8, "DF", false);
+        System.out.println(solution);
         solution = solution.replace(" ", "");
         assertTrue("The output actions do not lead to a goal state.",applyPlan(grid8, solution));
     }
@@ -265,7 +270,7 @@ public class TestMatrixPublic {
     }
 
 
-    @Test(timeout = 10000)
+    @Test(timeout = 120000)
     public void testd0() throws Exception {
         String solution = Matrix.solve(grid0, "ID", false);
         solution = solution.replace(" ", "");

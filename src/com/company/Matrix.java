@@ -106,9 +106,13 @@ class searchProblems {
             }
             if (Neoplace.equals(Telephone)) {
                 isNeoinHome = true;
+                //System.out.println("ana d5lt 3nd TB");
+                //System.out.println(Telephone);
+                //System.out.println(Neoplace);
             }
             //System.out.println(isNeoinHome +" " +areHostagesSaved +" "+ !isNeoDead);
             //System.out.println("savedddd"+stringarray[6].length());
+            //System.out.println(isNeoinHome);
             if (isNeoinHome && areHostagesSaved && !isNeoDead) {
                 //System.out.println("hi");
                 return 1;
@@ -385,28 +389,44 @@ class Matrix {
 
         switch (strategy) {
             case "BF":
-                out = breadthFirst(Q);
+                PriorityQueue<Node> bf = new PriorityQueue<Node>((b,a)->(b.depth-a.depth));
+                bf.add(n);
+                out = breadthFirst(bf);
                 break;
             case "DF":
-                out = depthFirst(Q);
+                PriorityQueue<Node> df = new PriorityQueue<Node>((a,b)->(b.depth-a.depth));
+                df.add(n);
+                out = depthFirst(df);
                 break;
             case "ID":
-                out = iterativeDeepeningSearch(Q);
+                PriorityQueue<Node> ids = new PriorityQueue<Node>((a,b)->(b.depth-a.depth));
+                ids.add(n);
+                out = iterativeDeepeningSearch(ids);
                 break;
             case "UC":
-                out = uniformCostSearch(Q);
+                PriorityQueue<Node> UC = new PriorityQueue<Node>((a,b)->(b.cost-a.cost));
+                UC.add(n);
+                out = uniformCostSearch(UC);
                 break;
             case "GR1":
-                out = greedySearchOne(Q);
+                PriorityQueue<Node> GR1 = new PriorityQueue<Node>((a,b)->(b.H1-a.H1));
+                GR1.add(n);
+                out = greedySearchOne(GR1);
                 break;
             case "GR2":
-                out = greedySearchTwo(Q);
+                PriorityQueue<Node> GR2 = new PriorityQueue<Node>((a,b)->(b.H2-a.H2));
+                GR2.add(n);
+                out = greedySearchTwo(GR2);
                 break;
             case "AS1":
-                out = aStarOne(Q);
+                PriorityQueue<Node> AS1 = new PriorityQueue<Node>((a,b)->(b.SumAStar1-a.SumAStar1));
+                AS1.add(n);
+                out = aStarOne(AS1);
                 break;
             case "AS2":
-                out = aStarTwo(Q);
+                PriorityQueue<Node> AS2 = new PriorityQueue<Node>((a,b)->(b.SumAStar2-a.SumAStar2));
+                AS2.add(n);
+                out = aStarTwo(AS2);
                 break;
             default:
                 out = "";
@@ -852,30 +872,8 @@ class Matrix {
         return Children;
     }
 
-//    private static boolean Carrynow(Node n) {
-//        String[] NodeList = n.state.split(";");
-//        String[] NeoCord = NodeList[0].split(",");// [x,y]
-//        String[] Hostages = NodeList[4].split(",");
-//        String NeoX = NeoCord[0];
-//        String NeoY = NeoCord[1];
-//        String[] CarriedHostages = NodeList[2].split(",");
-//        String TB = NodeList[5];
-//        String NeoC = NodeList[0];
-//        int CarryNumber = Integer.parseInt(NodeList[10]);
-//
-//        for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
-//            String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-//            if (NeoX.equals(HostagesHelper[1]) && NeoY.equals(HostagesHelper[2]) & !TB.equals(NeoC)){
-//                if (CarryNumber >= CarriedHostages.length || NodeList[2].isEmpty()){
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
 
-
-    public static Node calculateMove(String action, Node parent) {//
+    public static Node calculateMove(String action, Node parent) {
         Node child = new Node("", parent, "", parent.depth + 1, 0, ""); // STATE PARENT OPERATOR DEPTH COST PATH
         // SPLITTING PARENT STATE
         String[] NodeList = parent.state.split(";");
@@ -1268,7 +1266,7 @@ class Matrix {
         return Qnew;
     }
 
-    public static String breadthFirst(Queue<Node> Q) {
+    public static String breadthFirst(PriorityQueue<Node> Q) {
         searchProblems p = new searchProblems();
         Node Initial = Q.peek();
         String path="";
@@ -1304,6 +1302,136 @@ class Matrix {
 //                    deaths++;
 //                }
 //            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
+    }
+
+    public static String depthFirst(PriorityQueue<Node> Q) {
+        searchProblems p = new searchProblems();
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
+        int nodes = 1;
+        while (!Qnew.isEmpty()){
+            Q.add(Qnew.remove());
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
+            Queue<Node> children = stateSpace(Q.remove());
+            nodes++;
+            while (!children.isEmpty()) {
+                Q.add(children.remove());
+            }
+//            System.out.println( "null " + Q.peek().state );
+        }
+        if(Q.peek()==null){
+            return "No Solution";
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
+//            for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
+//                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
+//                    deaths++;
+//                }
+//            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
+    }
+
+    public static String iterativeDeepeningSearch(Queue<Node> Q) {
+        searchProblems p = new searchProblems();
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
+        int nodes = 1;
+        int limit = 1;
+        while (!Qnew.isEmpty()){
+            Q.add(Qnew.remove());
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
+            Queue<Node> children = stateSpace(Q.remove());
+            while (Q.peek().depth == limit) {
+                while (!children.isEmpty() && p.isGoalState(children.peek())==0) {
+                    nodes++;
+                    Q.add(children.remove());
+                }
+                limit++;
+            }
+
+            stateSet = new HashSet<>();
+//            System.out.println( "null " + Q.peek().state );
+        }
+
+        if(Q.peek()==null){
+            return "No Solution";
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
             if(HostagesHelper[3].equals("100")){
                 deaths++;
             }
@@ -1331,7 +1459,7 @@ class Matrix {
         return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
-    public static String depthFirst(Queue<Node> Q) {
+    public static String uniformCostSearch(Queue<Node> Q) {
         searchProblems p = new searchProblems();
         Node Initial = Q.peek();
         String path="";
@@ -1346,15 +1474,9 @@ class Matrix {
             Queue<Node> children = stateSpace(Q.remove());
             nodes++;
             while (!children.isEmpty()) {
-                Queue<Node> childrenInverse = new LinkedList<>();
-                while(!children.isEmpty()){
-                    childrenInverse.add(children.remove());
-                }
-                FIFO(Q, childrenInverse.remove());
+                Q.add(children.remove());
             }
 //            System.out.println( "null " + Q.peek().state );
-            System.out.println(Q.peek().state);
-            System.out.println(Q.peek().operator);
         }
         if(Q.peek()==null){
             return "No Solution";
@@ -1377,17 +1499,18 @@ class Matrix {
                 deaths++;
             }
         }
-
         if(!stateAttributes[7].isEmpty()){
             kills = stateAttributes[7].split(",").length;
         }
         Node lastNode = Q.peek();
         //System.out.println(lastNode.state);
         while(lastNode.parent != null) {
-            //System.out.println(lastNode.state);
-            //System.out.println(lastNode.operator);
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
             if(!path.isEmpty()){
-                path = lastNode.operator + "," +path;
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
             }
             else{
                 path = lastNode.operator;
@@ -1398,80 +1521,70 @@ class Matrix {
 
         //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
         return path + ";" + deaths + ";" + kills + ";" + nodes;
-
-    }
-
-    public static String iterativeDeepeningSearch(Queue<Node> Q) {
-        searchProblems p = new searchProblems();
-        Queue<Node> Qnew = stateSpace(Q.remove());
-        int nodes = 1;
-        int limit = 1;
-        while (!Qnew.isEmpty())
-            Q.add(Qnew.remove());
-        while (p.isGoalState(Q.peek()) == 0) {
-            while (Q.peek().depth == limit) {
-                Queue<Node> children = stateSpace(Q.remove());
-                if (!children.isEmpty()) {
-                    nodes++;
-                    Q.add(children.remove());
-                }
-            }
-            limit++;
-        }
-        String[] stateAttributes = Q.peek().state.split(";");
-        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
-        int kills = stateAttributes[7].split(",").length;
-        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
-    }
-
-    public static String uniformCostSearch(Queue<Node> Q) {
-        searchProblems p = new searchProblems();
-        Queue<Node> Qnew = stateSpace(Q.remove());
-        int kills;
-        int deaths;
-        int nodes = 1;
-        while (!Qnew.isEmpty())
-            Q.add(Qnew.remove());
-        while (p.isGoalState(Q.peek()) == 0) {
-            Queue<Node> children = stateSpace(Q.remove());
-            if (!children.isEmpty()) {
-                nodes++;
-                Q.add(children.remove());
-                sortQueue(new LinkedList<>(), Q);
-            }
-        }
-        String[] stateAttributes = Q.peek().state.split(";");
-        if(!stateAttributes[6].isEmpty()){
-            deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;}
-        else{
-            deaths = stateAttributes[4].split(",").length;
-        }
-        if(!stateAttributes[7].isEmpty()){
-            kills = stateAttributes[7].split(",").length;}
-        else{
-            kills = 0;
-        }
-        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
     public static String greedySearchOne(Queue<Node> Q) {
         searchProblems p = new searchProblems();
-        Queue<Node> Qnew = stateSpace(Q.remove());
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
         int nodes = 1;
-        while (!Qnew.isEmpty())
+        while (!Qnew.isEmpty()){
             Q.add(Qnew.remove());
-        while (p.isGoalState(Q.peek()) == 0) {
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
-            if (!children.isEmpty()) {
-                nodes++;
+            nodes++;
+            while (!children.isEmpty()) {
                 Q.add(children.remove());
-                greedySortQueue1(new LinkedList<>(), Q);
             }
+//            System.out.println( "null " + Q.peek().state );
+        }
+        if(Q.peek()==null){
+            return "No Solution";
         }
         String[] stateAttributes = Q.peek().state.split(";");
-        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
-        int kills = stateAttributes[7].split(",").length;
-        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
+//            for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
+//                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
+//                    deaths++;
+//                }
+//            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
     private static Queue<Node> greedySortQueue1(Queue<Node> Qnew, Queue<Node> Q) {
@@ -1496,22 +1609,66 @@ class Matrix {
 
     public static String greedySearchTwo(Queue<Node> Q) {
         searchProblems p = new searchProblems();
-        Queue<Node> Qnew = stateSpace(Q.remove());
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
         int nodes = 1;
-        while (!Qnew.isEmpty())
+        while (!Qnew.isEmpty()){
             Q.add(Qnew.remove());
-        while (p.isGoalState(Q.peek()) == 0) {
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
-            if (!children.isEmpty()) {
-                nodes++;
+            nodes++;
+            while (!children.isEmpty()) {
                 Q.add(children.remove());
-                greedySortQueue2(new LinkedList<>(), Q);
             }
+//            System.out.println( "null " + Q.peek().state );
+        }
+        if(Q.peek()==null){
+            return "No Solution";
         }
         String[] stateAttributes = Q.peek().state.split(";");
-        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
-        int kills = stateAttributes[7].split(",").length;
-        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
+//            for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
+//                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
+//                    deaths++;
+//                }
+//            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
     private static Queue<Node> greedySortQueue2(Queue<Node> Qnew, Queue<Node> Q) {
@@ -1536,45 +1693,133 @@ class Matrix {
 
     public static String aStarOne(Queue<Node> Q) {
         searchProblems p = new searchProblems();
-        Queue<Node> Qnew = stateSpace(Q.remove());
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
         int nodes = 1;
-        while (!Qnew.isEmpty())
+        while (!Qnew.isEmpty()){
             Q.add(Qnew.remove());
-        while (p.isGoalState(Q.peek()) == 0) {
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
-            if (!children.isEmpty()) {
-                nodes++;
+            nodes++;
+            while (!children.isEmpty()) {
                 Q.add(children.remove());
-                aStarSortQueue1(new LinkedList<>(), Q);
             }
+//            System.out.println( "null " + Q.peek().state );
+        }
+        if(Q.peek()==null){
+            return "No Solution";
         }
         String[] stateAttributes = Q.peek().state.split(";");
-        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
-        int kills = stateAttributes[7].split(",").length;
-        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
+//            for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
+//                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
+//                    deaths++;
+//                }
+//            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
     public static String aStarTwo(Queue<Node> Q) {
         searchProblems p = new searchProblems();
-        Queue<Node> Qnew = stateSpace(Q.remove());
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
         int nodes = 1;
-        while (!Qnew.isEmpty())
+        while (!Qnew.isEmpty()){
             Q.add(Qnew.remove());
-        while (p.isGoalState(Q.peek()) == 0) {
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
-            if (!children.isEmpty()) {
-                nodes++;
+            nodes++;
+            while (!children.isEmpty()) {
                 Q.add(children.remove());
-                aStarSortQueue2(new LinkedList<>(), Q);
             }
+//            System.out.println( "null " + Q.peek().state );
+        }
+        if(Q.peek()==null){
+            return "No Solution";
         }
         String[] stateAttributes = Q.peek().state.split(";");
-        int deaths = stateAttributes[4].split(",").length - stateAttributes[6].split(",").length;
-        int kills = stateAttributes[7].split(",").length;
-        return Q.peek().path + ";" + deaths + ";" + kills + ";" + nodes;
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
+//            for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
+//                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
+//                    deaths++;
+//                }
+//            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
 
-    private static Queue<Node> aStarSortQueue1(Queue<Node> Qnew, Queue<Node> Q) {
+    private static Queue<Node> aStarSortQueue1(Queue<Node> Qnew, Queue<Node> Q){
         if (Q.size() == 1)
             Qnew.add(Q.remove());
         else {
