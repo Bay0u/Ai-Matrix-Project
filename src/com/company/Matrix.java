@@ -370,42 +370,42 @@ class Matrix {
             case "BF":
                 PriorityQueue<Node> bf = new PriorityQueue<Node>((b,a)->(b.depth-a.depth));
                 bf.add(n);
-                out = breadthFirst(bf);
+                out = genericSearch(bf);
                 break;
             case "DF":
                 PriorityQueue<Node> df = new PriorityQueue<Node>((a,b)->(b.depth-a.depth));
                 df.add(n);
-                out = depthFirst(df);
+                out = genericSearch(df);
                 break;
             case "ID":
-                PriorityQueue<Node> ids = new PriorityQueue<Node>((a,b)->(b.depth-a.depth));
+                PriorityQueue<Node> ids = new PriorityQueue<Node>((a,b)->(b.depth=a.depth));
                 ids.add(n);
-                out = iterativeDeepeningSearch(ids);
+                out = genericSearch(ids);
                 break;
             case "UC":
                 PriorityQueue<Node> UC = new PriorityQueue<Node>((a,b)->(b.cost-a.cost));
                 UC.add(n);
-                out = uniformCostSearch(UC);
+                out = genericSearch(UC);
                 break;
             case "GR1":
                 PriorityQueue<Node> GR1 = new PriorityQueue<Node>((a,b)->(b.H1-a.H1));
                 GR1.add(n);
-                out = greedySearchOne(GR1);
+                out = genericSearch(GR1);
                 break;
             case "GR2":
                 PriorityQueue<Node> GR2 = new PriorityQueue<Node>((a,b)->(b.H2-a.H2));
                 GR2.add(n);
-                out = greedySearchTwo(GR2);
+                out = genericSearch(GR2);
                 break;
             case "AS1":
                 PriorityQueue<Node> AS1 = new PriorityQueue<Node>((a,b)->(b.SumAStar1-a.SumAStar1));
                 AS1.add(n);
-                out = aStarOne(AS1);
+                out = genericSearch(AS1);
                 break;
             case "AS2":
                 PriorityQueue<Node> AS2 = new PriorityQueue<Node>((a,b)->(b.SumAStar2-a.SumAStar2));
                 AS2.add(n);
-                out = aStarTwo(AS2);
+                out = genericSearch(AS2);
                 break;
             default:
                 out = "";
@@ -437,7 +437,7 @@ class Matrix {
             NewHostages.substring(0,NewHostages.length()-1);
         }
 
-        String NewState = NeoPlace + ";" + NeoDamage + ";" + NewCarriedHostages + ";" +TotalAgents+";"+NewHostages+";"+ NewSavedHostages + ";" + Killed +";" + NewPills ;
+        String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages +";" + NewPills ;
 
         if(stateSet.contains(NewState)){
             return true;
@@ -467,7 +467,14 @@ class Matrix {
             }
             NewHostages.substring(0,NewHostages.length()-1);
         }
-        String NewState = NeoPlace + ";" + NeoDamage + ";" + NewCarriedHostages + ";" +TotalAgents+";"+NewHostages+";"+ NewSavedHostages + ";" + Killed +";" + NewPills ;
+        //        String NewState = NeoPlace + ";" + NeoDamage + ";" + NewCarriedHostages + ";" +TotalAgents+";"+NewHostages+";"+ NewSavedHostages ;
+        // kill - total agents , killed , damage
+        // takePill - Hostages , Pills , damage
+        // hostage died - total agents
+        // fly, up , left , right , down - neo place
+        // drop - Carried , Saved
+        // carry - Carried
+        String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages  +";" + NewPills ;
         stateSet.add(NewState);
 
     }
@@ -1200,6 +1207,69 @@ class Matrix {
     }
 
     public static String breadthFirst(PriorityQueue<Node> Q) {
+        searchProblems p = new searchProblems();
+        Node Initial = Q.peek();
+        String path="";
+        Queue<Node> Qnew =stateSpace(Q.remove());
+        int nodes = 1;
+        while (!Qnew.isEmpty()){
+            Q.add(Qnew.remove());
+        }
+        //System.out.println("safe"+Q.peek().state.split(";")[6]);
+        while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
+            //System.out.println("d5lt tany");
+            Queue<Node> children = stateSpace(Q.remove());
+            nodes++;
+            while (!children.isEmpty()) {
+                Q.add(children.remove());
+            }
+//            System.out.println( "null " + Q.peek().state );
+        }
+        if(Q.peek()==null){
+            return "No Solution";
+        }
+        String[] stateAttributes = Q.peek().state.split(";");
+        String Hostages = stateAttributes[4];//
+        String[] HostageArray = Hostages.split(",");//
+        String Saved = stateAttributes[6];// HostagesSaved:H1,H2,H3
+        String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+        int deaths=0;
+        int kills=0;
+        for (int i = 0; i < HostageArray.length &&!Hostages.isEmpty() ; i++) { //if carried hostage died
+            String[] HostagesHelper = HostageArray[i].split(":");
+//            for(int j=0 ; j<SavedHostageArray.length && !Saved.isEmpty() ; j++){
+//                if(SavedHostageArray[j].equals(HostagesHelper[0])&& Integer.parseInt(HostagesHelper[3])>=100){
+//                    deaths++;
+//                }
+//            }
+            if(HostagesHelper[3].equals("100")){
+                deaths++;
+            }
+        }
+        if(!stateAttributes[7].isEmpty()){
+            kills = stateAttributes[7].split(",").length;
+        }
+        Node lastNode = Q.peek();
+        //System.out.println(lastNode.state);
+        while(lastNode.parent != null) {
+            System.out.println(lastNode.state);
+            System.out.println(lastNode.operator);
+            if(!path.isEmpty()){
+                if(!lastNode.operator.isEmpty()){
+                    path = lastNode.operator + "," +path;
+                }
+            }
+            else{
+                path = lastNode.operator;
+            }
+            lastNode = lastNode.parent;
+        }
+        System.out.println(Initial.state);
+
+        //System.out.println(path + ";" + deaths + ";" + kills + ";" + nodes);
+        return path + ";" + deaths + ";" + kills + ";" + nodes;
+    }
+    public static String genericSearch(PriorityQueue<Node> Q) {
         searchProblems p = new searchProblems();
         Node Initial = Q.peek();
         String path="";
