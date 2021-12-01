@@ -77,24 +77,6 @@ class searchProblems {
                 if (killed[i].contains("H")) {
                     numberOfKilledHostages++;
                 }
-//            String[] Hostage = HostageArray[i].split(":");// [H1][30]
-//            if (Hostage[3] == "100") { // CHECKS THE Damage
-//                String myHostage = Hostage[0];
-//                String Agents = stringarray[3];// TotalAgents:A1,A2,H4
-//                String[] agent = Agents.split(",");
-//                String Killed = stringarray[7];// Killed:H1,A3
-//                String[] killed = Killed.split(",");
-//                for (int j = 0; j < agent.length; j++) {
-//                    if (myHostage == agent[j]) {
-//                        return false; // as there is a converted hostage is still alive not saved or killed
-//                    }
-//                }
-//                for (int k = 0; k < killed.length; k++) {
-//                    if (myHostage == killed[k]) {
-//                        numberOfKilledHostages++; // as there is a converted hostage is killed
-//                    }
-//                }
-//            }
             }
             if (stringarray[1].equals("100")) {
                 isNeoDead = true;
@@ -106,9 +88,6 @@ class searchProblems {
             }
             if (Neoplace.equals(Telephone)) {
                 isNeoinHome = true;
-                //System.out.println("ana d5lt 3nd TB");
-                //System.out.println(Telephone);
-                //System.out.println(Neoplace);
             }
             //System.out.println(isNeoinHome +" " +areHostagesSaved +" "+ !isNeoDead);
             //System.out.println("savedddd"+stringarray[6].length());
@@ -691,8 +670,7 @@ class Matrix {
         }
         for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
             String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-            boolean isAgent = false;
-            boolean wasKilled = false;
+
             String[] killed = NodeList[7].split(",");
             int Hx = Integer.parseInt(HostagesHelper[1]);
             int Hy = Integer.parseInt(HostagesHelper[2]);
@@ -704,14 +682,11 @@ class Matrix {
                     && !NodeList[2].contains(HostagesHelper[0])//already carried
             ){
                 //System.out.println("3mlt carry");
-                ishostagehere = true;
                 if ((CarryNumber > CarriedHostages.length) || (NodeList[2].isEmpty())){
-                    haveenoughcarry = true;
                     action = calculateMove("carry", n);
                     if(!checkstate(action)){
                         Children.add(action);
                         addstate(action);
-                        ishostagehere = false;
                     }
                 }
             }
@@ -901,69 +876,21 @@ class Matrix {
             // DOWN LEFT RIGHT
             case "up":
                 NeoPlace = (NeoX - 1) + "," + NeoY;
-                if (NodeList[2].length() != 0) {
-                    for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty() ; i++) {// H1:H1X:H1Y:H1D,H2....
-                        String[] HostagesHelper = Hostages[i].split(":");
-                        for (int j = 0; j < CarriedHostages.length && !NodeList[2].isEmpty(); j++) {
-                            if (HostagesHelper[0].equals(CarriedHostages[j]))
-                                HostagesHelper[1] = String.valueOf(Integer.parseInt(HostagesHelper[1]) - 1);
-                        }
-                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                                + HostagesHelper[3];
-                        Hostages[i] = hostage;
-                    }
-                }
                 actiondone=true;
                 child.operator = "up";
                 break;
             case "down":
                 NeoPlace = (NeoX + 1) + "," + NeoY;
-                if (NodeList[2].length() != 0) {
-                    for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) {
-                        String[] HostagesHelper = Hostages[i].split(":");
-                        for (int j = 0; j < CarriedHostages.length && !NodeList[2].isEmpty(); j++) {
-                            if (HostagesHelper[0].equals(CarriedHostages[j]))
-                                HostagesHelper[1] = String.valueOf(Integer.parseInt(HostagesHelper[1]) + 1);
-                        }
-                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                                + HostagesHelper[3];
-                        Hostages[i] = hostage;
-                    }
-                }
                 actiondone=true;
                 child.operator = "down";
                 break;
             case "left":
                 NeoPlace = NeoX + "," + (NeoY - 1);
-                if (NodeList[2].length() != 0) {
-                    for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) {
-                        String[] HostagesHelper = Hostages[i].split(":");
-                        for (int j = 0; j < CarriedHostages.length && !NodeList[2].isEmpty(); j++) {
-                            if (HostagesHelper[0].equals(CarriedHostages[j]))
-                                HostagesHelper[2] = String.valueOf(Integer.parseInt(HostagesHelper[2]) - 1);
-                        }
-                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                                + HostagesHelper[3];
-                        Hostages[i] = hostage;
-                    }
-                }
                 actiondone=true;
                 child.operator = "left";
                 break;
             case "right":
                 NeoPlace = NeoX + "," + (NeoY + 1);
-                if (NodeList[2].length() != 0) {
-                    for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) {
-                        String[] HostagesHelper = Hostages[i].split(":");
-                        for (int j = 0; j < CarriedHostages.length && !NodeList[2].isEmpty(); j++) {
-                            if (HostagesHelper[0].equals(CarriedHostages[j]))
-                                HostagesHelper[2] = String.valueOf(Integer.parseInt(HostagesHelper[2]) + 1);
-                        }
-                        String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
-                                + HostagesHelper[3];
-                        Hostages[i] = hostage;
-                    }
-                }
                 actiondone=true;
                 child.operator = "right";
                 break;
@@ -1013,9 +940,8 @@ class Matrix {
                             boolean flag = false;
                             String[] HostagesHelper = Hostages[j].split(":");
                             if (Integer.parseInt(HostagesHelper[3]) >= 100) {
-                                for (int k = 0; k < SavedHostages.length && !NodeList[6].isEmpty(); k++){
-                                    if (SavedHostages[k].equals(HostagesHelper[0]))
-                                        flag = true;
+                                if (NodeList[6].contains(HostagesHelper[0])){
+                                    flag = true;
                                 }
                                 if (!flag) {
                                     HostagesHelper[3] = (Integer.parseInt(HostagesHelper[3]) - 22) + "";
@@ -1124,7 +1050,21 @@ class Matrix {
             boolean isSaved = false;
             boolean wasKilled = false;
             //boolean isAgent = false;
+            if (NodeList[2].length() != 0 && (child.operator.equals("up")
+                    ||child.operator.equals("down")
+                    ||child.operator.equals("left")
+                    ||child.operator.equals("right"))) {
+                    if (NewCarriedHostages.contains(HostagesHelper[0])){
+                        int NewNeoX = Integer.parseInt(NeoPlace.split(",")[0]);
+                        int NewNeoY = Integer.parseInt(NeoPlace.split(",")[1]);
+                        HostagesHelper[1] = String.valueOf(NewNeoX);
+                        HostagesHelper[2] = String.valueOf(NewNeoY);
+                    }
+                    String hostage = HostagesHelper[0] + ":" + HostagesHelper[1] + ":" + HostagesHelper[2] + ":"
+                            + HostagesHelper[3];
+                    Hostages[i] = hostage;
 
+            }
             for(int J = 0 ; J< Agents.length && !NodeList[3].isEmpty() ; J++){ //if he is already agent or he will be killed
                 String[] agentHelper = Agents[J].split(":");
                 if(!Agents[J].isEmpty()) {
@@ -1140,24 +1080,17 @@ class Matrix {
                     }
                 }
             }
-            for(int K = 0 ; K<CarriedHostages.length && !NodeList[2].isEmpty() ; K++){ //if he was carried
-                if(CarriedHostages[K].equals(HostagesHelper[0])){
-                    wasCarried = true;
-                    break;
-                }
+
+            if(NodeList[2].contains(HostagesHelper[0])){//carriedHostages List
+                wasCarried = true;
             }
-            for(int L = 0 ; L< killed.length && !NodeList[7].isEmpty() ; L++){ //if he was killed
-                if(killed[L].equals(HostagesHelper[0])){
-                    wasKilled = true;
-                    break;
-                }
+            if(NodeList[7].contains(HostagesHelper[0])){//killedHostages List
+                wasKilled = true;
             }
-            for(int P = 0 ; P< SavedHostages.length && !NodeList[6].isEmpty() ; P++){ //if he was saved
-                if(SavedHostages[P].equals(HostagesHelper[0])){
-                    wasSaved = true;
-                    break;
-                }
+            if(NodeList[6].contains(HostagesHelper[0])){ //SavedHostages List
+                wasSaved = true;
             }
+
             String NeoC = NodeList[0];
             String TB = NodeList[5];
             int Hx = Integer.parseInt(HostagesHelper[1]);
@@ -1408,7 +1341,7 @@ class Matrix {
         while (Q.peek() != null && p.isGoalState(Q.peek()) == 0 && !Q.isEmpty()) {
             //System.out.println("d5lt tany");
             Queue<Node> children = stateSpace(Q.remove());
-            while (Q.peek().depth == limit) {
+            while (children.peek().depth == limit) {
                 while (!children.isEmpty() && p.isGoalState(children.peek())==0) {
                     nodes++;
                     Q.add(children.remove());
