@@ -9,6 +9,7 @@ George Nicola 43-1355 T11
 AhmedSalah 43-18637 T14 -->
 #A discussion of your implementation of the search-tree node ADT.
 The Node ADT has ten variables:
+
 1. state
 2. parent
 3. operator
@@ -19,6 +20,7 @@ The Node ADT has ten variables:
 8. H2
 9. SumAStar1
 10. SumAStar2
+
 state is a String representing the current status of the Node, it contains all the relevant
 information about the Node and takes the following form:
 "NeoPlace:Nx,Ny;NeoDamage:20;CarriedHostages:H1,H2;TotalAgents:A1:A1X:A1Y,A2:A2X:A2Y,H4:H4X:H4Y;Tot
@@ -37,7 +39,6 @@ Pad is the list of launching pads in the format of Starting Pad X coordinate, St
 coordinate, Finishing Pad X coordinate, and Finishing Pad Y coordinate; Pill is the list of pills
 in the format of Pill1 X coordinate, Pill1 Y coordinate (that is affected if Neo took pill); CarryNumber is the number of
 hostages Neo can carry at once. state is initially set to “”.
-#2
 parent is a Node representing the previous Node which the current Node was derived from.
 In the case that the current Node is the initial node the search problem starts off with, the
 parent variable is set to null.
@@ -65,9 +66,10 @@ SumAStar1 is an integer representing the calculation of h(n) + g(n) where h is t
 heuristic function, n is the current node, and g is the cost of the current node.
 SumAStar2 is an integer representing the calculation of h(n) + g(n) where h is the second
 heuristic function, n is the current node, and g is the cost of the current node.
-#3
-A discussion of your implementation of the Matrix problem.
+
+#A discussion of your implementation of the Matrix problem.
 The Matrix ADT has six variables:
+
 1. Operators
 2. M
 3. N
@@ -92,11 +94,13 @@ and Helpers. The global variables are variables that might’ve been needed in m
 one method or helper method. The methods are the required methods from the
 description, i.e. genGrid() and solve(String grid, String strategy, boolean visualize), and the
 helper methods are the other methods we needed to implement and used later in the two
-#4
 methods. The most important helper functions are described in detail in the following
 point.
-A description of the main functions you implemented.
-visualize(String s): Method with a void return value. This method takes a String s in the
+  
+#A description of the main functions you implemented.
+visualize(String s): 
+  
+  Method with a void return value. This method takes a String s in the
 format of a grid, which is:
 M,N;C;NeoX,NeoY;TelephoneX,TelehoneY;
 AgentX1,AgentY1,...,AgentXk,AgentYk;
@@ -122,7 +126,6 @@ stateSpace(Node n): Method with a Queue<Node> return value. Returns the set of s
 reachable from the initial Node n by any sequence of actions.
 calculateMove(String action, Node parent): Method with a Node return value. Returns the
 Node which results from executing String action on Node parent.
-#5
 FIFO(Queue<Node> Q, Node n): Method with a void return value. Adds the Node n in the
 peek of Queue<Node> Q. Used in depth first searching.
 elementAt(Queue<Node> Q, int index): Method with a node return value. Returns the element
@@ -150,7 +153,6 @@ Queue<Node> Q and we create a new queue that includes the state space nodes. We 
 removing from the state space queue and adding onto our new queue Q. As long as our
 current node is NOT the goal state and we have not reached our depth limit set, the
 children to that node are going to be the next removed item from the state space queue,
-#6
 and as long as there are children remaining we’ll add them to our queue and increase the
 limit by one then repeat the search.
 uniformCostSearch(Queue<Node> Q): Method with a String return value. We are given
@@ -180,7 +182,6 @@ greedySortQueue1(Queue<Node> Qnew, Queue<Node> Q): Method with a Queue<Node> ret
 value. Sorts Queue<Node> Q recursively based on the first heuristic cost H1 of each Node in
 the Queue and returns the final form of Queue<Node> Qnew. Nodes are sorted in ascending
 order.
-#7
 greedySortQueue2(Queue<Node> Qnew, Queue<Node> Q): Method with a Queue<Node> return
 value. Sorts Queue<Node> Q recursively based on the second heuristic cost H2 of each Node
 in the Queue and returns the final form of Queue<Node> Qnew. Nodes are sorted in
@@ -209,7 +210,6 @@ each Node in the Queue and returns the final form of Queue<Node> Qnew. Nodes are
 in ascending order.
 A discussion of the heuristic functions you employed and, in the case of A*, an
 argument for their admissibility.
-#8
 We have 2 heuristic numbers for each node that depends on the state for the greedy
 search methods. We have 2 sum numbers that are representing the summation of the heuristic
 numbers and the costs for the A* search methods. We have the functions Calculateheuristic1
@@ -233,4 +233,3 @@ utilization, and the number of expanded nodes. You should comment on the
 differences in the RAM usage, CPU utilization, and the number of expanded nodes
 between the implemented search strategies.
 Text
-9
