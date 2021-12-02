@@ -132,7 +132,7 @@ class searchProblems {
                 node.cost = node.cost - 20;
                 break;
             case "kill":
-                node.cost = node.cost + (20 * node.depth);
+                node.cost = node.cost + 20;
                 break;
             case "fly":
                 node.cost = node.cost + 10;
@@ -429,13 +429,13 @@ class Matrix {
         //state = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
         // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
         //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
-        if(!NodeList[4].isEmpty()){
-            for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
-                String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-                NewHostages = HostagesHelper[0]+",";
-            }
-            NewHostages.substring(0,NewHostages.length()-1);
-        }
+//        if(!NodeList[4].isEmpty()){
+//            for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
+//                String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
+//                NewHostages = HostagesHelper[0]+",";
+//            }
+//            NewHostages.substring(0,NewHostages.length()-1);
+//        }
 
         String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages +";" + NewPills ;
 
@@ -460,13 +460,13 @@ class Matrix {
         //state = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
         // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
         //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
-        if(!NodeList[4].isEmpty()){
-            for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
-                String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-                NewHostages = HostagesHelper[0]+",";
-            }
-            NewHostages.substring(0,NewHostages.length()-1);
-        }
+//        if(!NodeList[4].isEmpty()){
+//            for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
+//                String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
+//                NewHostages = HostagesHelper[0]+",";
+//            }
+//            NewHostages.substring(0,NewHostages.length()-1);
+//        }
         //        String NewState = NeoPlace + ";" + NeoDamage + ";" + NewCarriedHostages + ";" +TotalAgents+";"+NewHostages+";"+ NewSavedHostages ;
         // kill - total agents , killed , damage
         // takePill - Hostages , Pills , damage
