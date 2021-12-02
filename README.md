@@ -7,7 +7,7 @@ MohammadEhab 43-11068 T17
 MalikSohile 43-12688
 George Nicola 43-1355 T11
 AhmedSalah 43-18637 T14 -->
-#A discussion of your implementation of the search-tree node ADT.
+# A discussion of your implementation of the search-tree node ADT.
 The Node ADT has ten variables:
 
 1. state
@@ -67,7 +67,7 @@ heuristic function, n is the current node, and g is the cost of the current node
 SumAStar2 is an integer representing the calculation of h(n) + g(n) where h is the second
 heuristic function, n is the current node, and g is the cost of the current node.
 
-#A discussion of your implementation of the Matrix problem.
+# A discussion of your implementation of the Matrix problem.
 The Matrix ADT has six variables:
 
 1. Operators
@@ -76,6 +76,7 @@ The Matrix ADT has six variables:
 4. gridCoordinates
 5. stateSet
 6. goalStatePath
+
 Operators is a String[] defined as
 {“up”,”down”,”left”,”right”,”carry”,”drop”,”takePill”,”kill”,”fly”}
 M is a randomly generated int with a value from 5 to 15 inclusive. It represents the number
@@ -97,7 +98,7 @@ helper methods are the other methods we needed to implement and used later in th
 methods. The most important helper functions are described in detail in the following
 point.
   
-#A description of the main functions you implemented.
+# A description of the main functions you implemented.
 visualize(String s): 
   
   Method with a void return value. This method takes a String s in the
@@ -227,9 +228,11 @@ so we are calculating its distance to the telephone booth. The goal state will h
 all the hostages that have damage lower than 100 as they would be saved or we won't
 calculate the distances of the dead ones or the killed ones or the converted ones so it will
 be 0 as all of them should be at the telephone booth.
-A comparison of the performance of the implemented search strategies on your
+  
+# A comparison of the performance of the implemented search strategies on your
 running examples in terms of completeness, optimality, RAM usage, CPU
 utilization, and the number of expanded nodes. You should comment on the
 differences in the RAM usage, CPU utilization, and the number of expanded nodes
 between the implemented search strategies.
+  
 Text
