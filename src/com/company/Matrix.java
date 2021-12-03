@@ -1153,6 +1153,8 @@ public class Matrix {
         }
         return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
+
+    //Method that saves expanded nodes depending on the type of search and iterates from initial to goal, stating whether its complete or not
     public static String genericSearch(PriorityQueue<Node> Q , searchProblems P) {
         //OUR GENERAL SEARCH FUNCTION LIKE THE ONE IN THE LECTURE
         Node Initial = P.InitialState;
@@ -1180,7 +1182,8 @@ public class Matrix {
             return NodePaths(node,nodes);
         }
     }
-
+    //Same function as genericSearch
+    //Used in IDS(limit to the genericSearch function)
     public static String genericSearchWithLimit(PriorityQueue<Node> Q , searchProblems P) {
         Node Initial = P.InitialState;
         int nodes = 1;
