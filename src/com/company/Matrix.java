@@ -3,20 +3,21 @@ import java.util.*;
 import static java.lang.Math.sqrt;
 class Node {
     public String state;
-    // = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
-    // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
-    //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
-    public Node parent;
-    public int H1;
-    public int H2;
-    public int SumAStar1;
-    public int SumAStar2;
-    public String operator;// up:cost+10,down:cost+10,left:cost+10,right:cost+10,carry:cost-10,drop:-10,takePill:-10,kill:+10,fly:+10";
-    public int depth;
-    public int cost;
-    public String path;// = parent.operator + operator;
+    // AS "NEO Cordinates :Nx,Ny;NeoDamage:10 ;CarriedHostages:H1,H2;TotalAgents:A1:A1X:A1Y;"
+    // + "TotalHostages:H1:H1X:H1Y:H1D,H2:H2X:H2Y:H2D,H3:30,H4:100,H6:50,H5:10;Telephone Booth Coordinates:Tx,Ty;"
+    //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1:SP1X:SP1Y,FP1:FP1X:FP1Y;PILL:L1X,L1Y;CarryNumber";
 
-    Node() {
+    public Node parent; //PARENT NODE
+    public int H1;//HEURISTIC NUMBER 1
+    public int H2;//HEURISTIC NUMBER 2
+    public int SumAStar1;//A star number 1
+    public int SumAStar2;//A star number 2
+    public String operator;//Node operator
+    public int depth;//Node Depth
+    public int cost;//cost Depth
+    public String path;//Node path
+
+    Node() { //default instructor
         this.state = "";
         this.parent = null;
         this.operator = "";
@@ -25,7 +26,7 @@ class Node {
         this.path = operator;
     }
 
-    Node(String state, Node parent, String operator, int depth, int cost, String path) {
+    Node(String state, Node parent, String operator, int depth, int cost, String path) { //Updating Instructor
         this.state = state;
         this.parent = parent;
         this.operator = operator;
@@ -36,9 +37,7 @@ class Node {
         else
             this.path = operator;
     }
-    // Example Input Grid:
-    // 5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;
-    // 0,0,30,3,0,80,4,4,80
+
 }
 class searchProblems {
     // Operators
@@ -46,16 +45,13 @@ class searchProblems {
     // initial state
     public Node InitialState;
     // goal test
-    // path cost
-
     public int isGoalState(Node node) {
         // chick place neo x,y = telephone
         // chick total number of Hostages == [saved Hostages + Killed Hostages whose
         // changed to agent]
         // saved hostage ignored carried and Hostages info in state
-        // Chick neo hp isn't 0
-        //System.out.println(node.state);
-        if(node == null){
+        // Chick neo isn't dead
+        if(node == null){ //not goal
             return 0;
         }else {
             String[] stringarray = node.state.split(";");
@@ -63,37 +59,31 @@ class searchProblems {
             boolean isNeoDead = false;
             boolean isNeoinHome = false;
 
-            String Hostages = stringarray[4];//
-            String[] HostageArray = Hostages.split(",");//
+            String Hostages = stringarray[4];//lets get the hostages part
+            String[] HostageArray = Hostages.split(",");//lets split them to see how many hostages
             String Saved = stringarray[6];// HostagesSaved:H1,H2,H3
-            String[] SavedHostageArray = Saved.split(",");// H1,H2,H3
+            String[] SavedHostageArray = Saved.split(",");// [H1],[H2],[H3]
             String Killed = stringarray[7];// Killed:H1,A3
-            String[] killed = Killed.split(",");
-            String Neoplace = stringarray[0];
-            String Telephone = stringarray[5];
+            String[] killed = Killed.split(",");// [H1],[A3]
+            String Neoplace = stringarray[0]; //x,y
+            String Telephone = stringarray[5];//Telephone x,y
             int numberOfKilledHostages = 0;
-            //System.out.println("saved"+SavedHostageArray.length);
-            for (int i = 0; i < killed.length && !Killed.isEmpty(); i++) {
+            for (int i = 0; i < killed.length && !Killed.isEmpty(); i++) { //let calculate the number of the killed hostages
                 if (killed[i].contains("H")) {
                     numberOfKilledHostages++;
                 }
             }
-            if (stringarray[1].equals("100")) {
+            if (stringarray[1].equals("100")) { //lets see if neo is dead
                 isNeoDead = true;
             }
-            //System.out.println(Saved.length() +" " + numberOfKilledHostages +" "+ HostageArray.length);
 
-            if ((SavedHostageArray.length + numberOfKilledHostages) == HostageArray.length && !Saved.isEmpty() && !Hostages.isEmpty()) {
+            if ((SavedHostageArray.length + numberOfKilledHostages) == HostageArray.length && !Saved.isEmpty() && !Hostages.isEmpty()) {//lets see if all hostages saved or killed
                 areHostagesSaved = true;
             }
-            if (Neoplace.equals(Telephone)) {
+            if (Neoplace.equals(Telephone)) { //lets see if neo ends at TB place
                 isNeoinHome = true;
             }
-            //System.out.println(isNeoinHome +" " +areHostagesSaved +" "+ !isNeoDead);
-            //System.out.println("savedddd"+stringarray[6].length());
-            //System.out.println(isNeoinHome);
             if (isNeoinHome && areHostagesSaved && !isNeoDead) {
-                //System.out.println("hi");
                 return 1;
 
             } else {
@@ -103,10 +93,7 @@ class searchProblems {
     }
 
     public static void pathCost(Node node) {
-        // operator
-        // up:cost+10,down:cost+10,left:cost+10,right:cost+10,carry:cost-20,drop:-20,takePill:-20,kill:+20,fly:+10";
-        // hostage died : cost+10
-        String[] stringarray = node.state.split(";");
+        //lets declare our costs
         switch (node.operator) {
             case "up":
                 node.cost = node.cost + 10;
@@ -141,6 +128,7 @@ class searchProblems {
     }
 
     public static void Calculateheuristic1(Node n) {
+        //first heuristic function
         String[] state = n.state.split(";");
         String[] NeoCord = state[0].split(",");// [x,y]
         String[] Hostages = state[4].split(",");
@@ -152,7 +140,6 @@ class searchProblems {
         int NeoY = Integer.parseInt(NeoCord[1]);
         int TBX = Integer.parseInt(TB[0]);
         int TBY = Integer.parseInt(TB[1]);
-        //int numberoFSaved = (state[6].split(",")).length;
         int distance = (int) sqrt((NeoY - NeoX) * (NeoY - NeoX) + (TBX - TBY) * (TBX - TBY));
         int numberOfKilledHostages = 0;
         for (int i = 0; i < Hostages.length && !state[4].isEmpty() ; i++) {
@@ -172,6 +159,8 @@ class searchProblems {
     }
 
     public static void Calculateheuristic2(Node n) {
+        //second heuristic function
+
         String[] state = n.state.split(";");
         String[] Hostages = state[4].split(",");
         String[] TB = state[5].split(",");
@@ -309,11 +298,12 @@ public class Matrix {
         String agents = "";
         String pads = "";
         String pills = "";
+        //lets take the grid coordinates
         M = Integer.parseInt(OurGrid[0].split(",")[0]);
         N = Integer.parseInt(OurGrid[0].split(",")[1]);
-
+        //lets take the carrynumber
         String CarryNumber = OurGrid[1];
-
+        //lets save our hostages
         if(!OurGrid[7].isEmpty()) {
             String[] Hostages = OurGrid[7].split(",");
             for (int i = 0; i < Hostages.length ; i=i+3) {
@@ -322,6 +312,7 @@ public class Matrix {
 
             hostages = hostages.substring(0, hostages.length() - 1);
         }
+        //lets save our agents
         if(!OurGrid[4].isEmpty()) {
             String[] Agents = OurGrid[4].split(",");
             for (int i = 0; i < Agents.length; i=i+2) {
@@ -329,6 +320,7 @@ public class Matrix {
             }
             agents = agents.substring(0, agents.length() - 1);
         }
+        //lets save our pads
         if(!OurGrid[6].isEmpty()){
             String[] Pads = OurGrid[6].split(",");
             for (int i = 0; i < Pads.length; i=i+4) {
@@ -337,6 +329,7 @@ public class Matrix {
             }
             pads = pads.substring(0, pads.length() - 1);
         }
+        //lets save our pills
         if(!OurGrid[5].isEmpty()) {
             String[] Pills = OurGrid[5].split(",");
             for (int i = 0; i < Pills.length; i=i+2) {
@@ -344,24 +337,16 @@ public class Matrix {
             }
             pills = pills.substring(0, pills.length() - 1);
         }
-        //state = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
-        // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
-        //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
+        //lets declare our initial node with initial values
 
-        //grid = "M,N; C; NEOX,NEOY;TX,TY;
-        //AGENTX,AGENTY,AGENT2X,AGENTY;
-        //PILLX1,PILLY1,PILLX2,PILLY2;
-        //SP1X,SP1Y,FP1X,FP1Y,..;
-        //HX,HY,HD
         n.state = OurGrid[2] + ";0;;" + agents + ";" + hostages + ";" + OurGrid[3] + ";" + ";" + ";" +pads + ";" + pills
                 + ";" + CarryNumber;
-        searchProblems.Calculateheuristic1(n);
-        searchProblems.Calculateheuristic2(n);
+
         stateSet.add(n.state);
         p.InitialState = n;
 
         String out = "";
-
+        //lets check our strategies
         switch (strategy) {
             case "BF":
                 PriorityQueue<Node> bf = new PriorityQueue<Node>((b,a)->(b.depth-a.depth));
@@ -398,37 +383,25 @@ public class Matrix {
             default:
                 out = "";
         }
+        //checks the visualize boolean
         if (visualize)
             visualize(goalStatePath, grid);
 
         return out;
     }
     public static boolean checkstate(Node n){
+        //our checkstate if the node state is already submitted
         String[] NodeList = n.state.split(";");
-        String[] Hostages = NodeList[4].split(",");
         int NeoDamage = Integer.parseInt(NodeList[1]);
         String NeoPlace = NodeList[0];
-        String Killed = NodeList[7];
         String TotalAgents = NodeList[3];
         String NewCarriedHostages = NodeList[2];
         String NewSavedHostages = NodeList[6];
-        String NewPills = NodeList[9];
-        String NewHostages="";
-//        //state = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
-//        // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
-//        //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
-////        if(!NodeList[4].isEmpty()){
-////            for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
-////                String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-////                NewHostages = HostagesHelper[0]+",";
-////            }
-////            NewHostages.substring(0,NewHostages.length()-1);
-////        }
-//
+
 
         String NewState = NeoPlace + ";" + NeoDamage +";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages.length() ;
 
-        if(stateSet.contains(n.state)){
+        if(stateSet.contains(NewState)){
             return true;
         }
         else {
@@ -436,41 +409,27 @@ public class Matrix {
         }
     }
     public static void addstate(Node n){
+        //lets add our node state to the hashset
+
         String[] NodeList = n.state.split(";");
-        String[] Hostages = NodeList[4].split(",");
         int NeoDamage = Integer.parseInt(NodeList[1]);
         String NeoPlace = NodeList[0];
-        String Killed = NodeList[7];
         String TotalAgents = NodeList[3];
         String NewCarriedHostages = NodeList[2];
         String NewSavedHostages = NodeList[6];
-        String NewPills = NodeList[9];
-        String NewHostages="";
-        //state = "Nx,Ny;NeoDamage;Carried:H1,H2;TotalAgents:A1:A1X:A1Y,A2,H4;"
-        // + "TotalHostages:H1:H1X:H1Y:100,H2:70,H3:30,H4:100,H6:50,H5:10;Tx,Ty;"
-        //+ "HostagesSaved:H2,H3;Killed:H1,A3;PAD:SP1X,SP1Y,FP1X,FP2X;PILL:L1X,L1Y;CarryNumber";
-//        if(!NodeList[4].isEmpty()){
-//            for (int i = 0; i < Hostages.length  && !NodeList[4].isEmpty(); i++) { // CARRY
-//                String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
-//                NewHostages = HostagesHelper[0]+",";
-//            }
-//            NewHostages.substring(0,NewHostages.length()-1);
-//        }
+
         String NewState = NeoPlace + ";" +NeoDamage +";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages.length();
-        // kill - total agents , killed , damage
-        // takePill - Hostages , Pills , damage
-        // hostage died - total agents
-        // fly, up , left , right , down - neo place
-        // drop - Carried , Saved
-        // carry - Carried
-        //String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages  +";" + NewPills ;
-        stateSet.add(n.state);
+        //Lets Add the new node state to our StateSet HashMap
+        stateSet.add(NewState);
     }
     // HELPERS
+
+    //generates a random value between m and n
     public static int randomGenerator(int m, int n) {
         return m + (int) (Math.random() * (n + 1));
     }
 
+    //return a free space to use in the grid
     public static String occupy() {
         boolean occupied = true;
         String s = "";
@@ -486,7 +445,7 @@ public class Matrix {
         return s;
     }
 
-
+    //our visualizes methods
     public static void visualize(ArrayList<String> path, String grid) {
         visualize(grid);
         if (path.size() == 0)
@@ -620,11 +579,12 @@ public class Matrix {
         // }
     }
 
+    //the expand of our node is happining here
     public static Queue<Node> stateSpace(Node n) {
         Queue<Node> Children = new LinkedList<>();
         String[] NodeList = n.state.split(";");
-        String[] NeoCord = NodeList[0].split(",");// [x,y]
-        String[] Agents = NodeList[3].split(",");// [A0,X,Y],[A1,X,Y] A0:A0X:A0Y,A1:
+        String[] NeoCord = NodeList[0].split(",");
+        String[] Agents = NodeList[3].split(",");
         String[] Hostages = NodeList[4].split(",");
         int NeoX = Integer.parseInt(NeoCord[0]);
         int NeoY = Integer.parseInt(NeoCord[1]);
@@ -633,16 +593,14 @@ public class Matrix {
         String[] CarriedHostages = NodeList[2].split(",");
         String TB = NodeList[5];
         String NeoC = NodeList[0];
-        // String[] SavedHostages = NodeList[6].split(",");
         int NeoDamage = Integer.parseInt(NodeList[1]);
         int CarryNumber = Integer.parseInt(NodeList[10]);
         Node action;
         boolean agentkilled = false;
         boolean isagenthere = false;
         boolean ishostagehere = false;
-        boolean haveenoughcarry = false;
-        boolean kill = false;
 
+        //CHECKS FLY
         if(!n.operator.equals("fly")) {
             for (int i = 0; i < Pads.length && !NodeList[8].isEmpty(); i = i + 2) { // [sp1x,sp1y,fp1x,fp1y] pads
 
@@ -663,7 +621,7 @@ public class Matrix {
 
             }
         }
-
+        //CHECKS CARRY
         if(!n.operator.equals("drop") && !n.operator.equals("carry")) {
             for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CARRY
                 String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
@@ -699,6 +657,7 @@ public class Matrix {
                 }
             }
         }
+        //CHECKS TAKE PILL
         if(!n.operator.equals("takePill")) {
             for (int i = 0; i < Pills.length && !NodeList[9].isEmpty(); i = i + 2) {// takePill
                 int Px = Integer.parseInt(Pills[i]);
@@ -718,8 +677,9 @@ public class Matrix {
         isagenthere =false;
         agentkilled =false;
         ishostagehere = false;
+        //CHECKS UP
         if (NeoX > 0 && (!n.operator.equals("down"))) { // UP [A0:x:y],[A1:x:y]
-            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CARRY
+            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CHECK IF THERE IS A HOSTAGE WITH 98 HP
                 String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
                 int Hx = Integer.parseInt(HostagesHelper[1]);
                 int Hy = Integer.parseInt(HostagesHelper[2]);
@@ -760,7 +720,7 @@ public class Matrix {
         ishostagehere = false;
 
         if (NeoX < (M-1) && (!n.operator.equals("up"))) { // DOWN
-            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CARRY
+            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CHECK IF THERE IS A HOSTAGE WITH 98 HP
                 String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
                 int Hx = Integer.parseInt(HostagesHelper[1]);
                 int Hy = Integer.parseInt(HostagesHelper[2]);
@@ -800,7 +760,7 @@ public class Matrix {
         ishostagehere = false;
 
         if (NeoY > 0  && (!n.operator.equals("right"))) { // LEFT
-            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CARRY
+            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CHECK IF THERE IS A HOSTAGE WITH 98 HP
                 String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
                 int Hx = Integer.parseInt(HostagesHelper[1]);
                 int Hy = Integer.parseInt(HostagesHelper[2]);
@@ -843,7 +803,7 @@ public class Matrix {
         ishostagehere = false;
 
         if (NeoY < (N-1)  && (!n.operator.equals("left"))) {// RIGHT
-            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CARRY
+            for (int i = 0; i < Hostages.length && !NodeList[4].isEmpty(); i++) { // CHECK IF THERE IS A HOSTAGE WITH 98 HP
                 String[] HostagesHelper = Hostages[i].split(":");// [[H1,H1X,H1Y,H1D],,,,]
                 int Hx = Integer.parseInt(HostagesHelper[1]);
                 int Hy = Integer.parseInt(HostagesHelper[2]);
@@ -1196,7 +1156,6 @@ public class Matrix {
         return path + ";" + deaths + ";" + kills + ";" + nodes;
     }
     public static String genericSearch(PriorityQueue<Node> Q , searchProblems P) {
-        //Queue <Node> Q= new LinkedList<>();
         Node Initial = P.InitialState;
         Q.add(Initial);
         int nodes = 1;
@@ -1222,6 +1181,7 @@ public class Matrix {
             return NodePaths(node,nodes);
         }
     }
+
     public static String genericSearchWithLimit(PriorityQueue<Node> Q , searchProblems P) {
         //Queue <Node> Q= new LinkedList<>();
         Node Initial = P.InitialState;
