@@ -428,7 +428,7 @@ public class Matrix {
 
         String NewState = NeoPlace + ";" + NeoDamage +";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages.length() ;
 
-        if(stateSet.contains(NewState)){
+        if(stateSet.contains(n.state)){
             return true;
         }
         else {
@@ -464,7 +464,7 @@ public class Matrix {
         // drop - Carried , Saved
         // carry - Carried
         //String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages  +";" + NewPills ;
-        stateSet.add(NewState);
+        stateSet.add(n.state);
     }
     // HELPERS
     public static int randomGenerator(int m, int n) {
