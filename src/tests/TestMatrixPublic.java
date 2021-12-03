@@ -1,5 +1,6 @@
-package com.company;
+package tests;
 
+import com.company.Matrix;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
