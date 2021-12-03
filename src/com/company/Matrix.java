@@ -426,7 +426,7 @@ public class Matrix {
 ////        }
 //
 
-        String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+Killed+";"+ NewSavedHostages +";" + NewPills;
+        String NewState = NeoPlace + ";" + NeoDamage +";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages.length() ;
 
         if(stateSet.contains(NewState)){
             return true;
@@ -456,7 +456,7 @@ public class Matrix {
 //            }
 //            NewHostages.substring(0,NewHostages.length()-1);
 //        }
-        String NewState = NeoPlace + ";" + NewCarriedHostages + ";" +TotalAgents+";"+Killed+";"+ NewSavedHostages +";" + NewPills;
+        String NewState = NeoPlace + ";" +NeoDamage +";" + NewCarriedHostages + ";" +TotalAgents+";"+ NewSavedHostages.length();
         // kill - total agents , killed , damage
         // takePill - Hostages , Pills , damage
         // hostage died - total agents
@@ -1230,6 +1230,7 @@ public class Matrix {
         boolean failure = true;
         int limit = 0;
         while(failure) {
+            nodes = 1;
             Q.add(Initial);
             stateSet = new HashSet<>();
             while (!Q.isEmpty()) {
@@ -1250,7 +1251,6 @@ public class Matrix {
                 }
                 nodes++;
             }
-            nodes = 0;
             limit++;
         }
         return NodePaths(node,nodes);
